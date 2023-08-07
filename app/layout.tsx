@@ -42,6 +42,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
+      <head>
+        <meta name="google-site-verification" content="CpVCplc-3RTh-cY6hgJPKyvXgKzLn97p98WDCKHfQbs" />
+      </head>
       <body className={pretendard.className}>
         <script dangerouslySetInnerHTML={{ __html: ColorModeScript }} />
         <ColorModeProvider>
