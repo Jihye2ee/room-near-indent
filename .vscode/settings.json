@@ -1,0 +1,21 @@
+{
+  "eslint.format.enable": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "prettier.singleQuote": true,
+  "prettier.tabWidth": 2,
+  "prettier.arrowParens": "always",
+  "prettier.jsxSingleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.useTabs": false,
+  "prettier.bracketSpacing": true,
+  "importSorter.generalConfiguration.exclude": [".*\\.d\\.ts"],
+  "importSorter.importStringConfiguration.tabSize": 2,
+  "importSorter.importStringConfiguration.hasSemicolon": false,
+  "importSorter.generalConfiguration.sortOnBeforeSave": true
+}
