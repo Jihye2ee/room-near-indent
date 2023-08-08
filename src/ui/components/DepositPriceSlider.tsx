@@ -40,7 +40,7 @@ const DepositPriceSlider = ({ value, onChange }: Props) => {
 
   return (
     <Stack>
-      <Typography variant='body2' tabIndex={1} aria-label=''>보증금</Typography>
+      <Typography variant='body2' tabIndex={0} aria-label=''>보증금</Typography>
       <Stack justifyContent='center' alignItems='center'>
         <Slider
           sx={{ m: 1 }}

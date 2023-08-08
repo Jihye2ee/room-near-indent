@@ -13,7 +13,7 @@ type Props = {
 
 const LandList = ({ items }: Props) => {
   return (
-    <Stack tabIndex={0} aria-label='매물 목록'>
+    <Stack tabIndex={0} aria-label='매물 목록' sx={{ width: '100%' }}>
       <Stack tabIndex={0} mt={2}>
         <Typography aria-label={`총 ${items.length}`} variant='body1' sx={{ fontWeight: 500, ml: 1, mb: 1, color: 'grey.600' }}>총 {items.length}개</Typography>
       </Stack>
@@ -27,7 +27,7 @@ const LandList = ({ items }: Props) => {
             field: 'item_id',
             headerName: '매물 정보',
             headerAlign: 'center',
-            width: 340,
+            width: 300,
             sortable: false,
             renderCell: ({ row }) => {
               return <LandListItem item={row} />
