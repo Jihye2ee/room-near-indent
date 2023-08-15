@@ -12,8 +12,11 @@ type Props = {
 const LandListItem = ({ item }: Props) => {
   const imageURL = useMemo(() => item.images_thumbnail && `${item.images_thumbnail}?w=800&q=70&a=1`, [item.images_thumbnail])
   return (
-    <Stack tabIndex={0} direction='row' alignItems='center' justifyContent='center'>
-      <Image src={imageURL ?? ''} sizes='cover' alt='' width={120} height={120} />
+    <Stack tabIndex={0} direction='row'>
+      <Stack>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={imageURL ?? ''} alt='' width={120} height={120} style={{ objectFit: 'cover' }} />
+      </Stack>
       <Stack ml={2} gap={1}>
         <Typography variant='body2' >{item.address1}</Typography>
         <Typography variant='body2'>{item.floor}층 / {item.building_floor}층</Typography>

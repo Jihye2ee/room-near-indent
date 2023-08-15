@@ -1,4 +1,5 @@
 'use client'
+import Image from 'next/image'
 import Link from 'next/link'
 
 import { PropertyInfo } from '@/src/data/types'
@@ -27,7 +28,8 @@ const LandList = ({ items }: Props) => {
             field: 'item_id',
             headerName: '매물 정보',
             headerAlign: 'center',
-            width: 300,
+            flex: 0.85,
+            align: 'center',
             sortable: false,
             renderCell: ({ row }) => {
               return <LandListItem item={row} />
@@ -36,13 +38,23 @@ const LandList = ({ items }: Props) => {
           {
             field: '',
             headerName: '더보기',
-            width: 80,
+            flex: 0.15,
+            align: 'center',
             sortable: false,
             renderCell: ({ row }) =>
-              <Link aria-label='더보기' href={`https://www.zigbang.com/home/villa/items/${row.item_id}`} target='_blank'>→</Link>
+              <Link aria-label='더보기' href={`https://www.zigbang.com/home/villa/items/${row.item_id}`} target='_blank'>
+                <Image src='/zigbang-logo.png' alt='직방 더보기' width={20} height={20} />
+              </Link>
           },
         ]}
         disableColumnMenu
+        initialState={{
+          pagination: {
+            paginationModel: {
+              pageSize: 10,
+            }
+          }
+        }}
       />
     </Stack>
   )
