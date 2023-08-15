@@ -1,28 +1,53 @@
 'use client'
+import { isEmpty } from 'lodash-es'
 import Link from 'next/link'
-import { useState } from 'react'
+import { usePathname } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
+import { getNaverLandCortarNo, getNaverlandData } from '@/src/data/naverland/queries'
 import { getOneroomIDs } from '@/src/data/oneroom/queries'
 import { getLandList } from '@/src/data/queries'
-import { PropertyInfo } from '@/src/data/types'
+import { NaverlandItem, PropertyInfo } from '@/src/data/types'
 import useDeviceType from '@/src/hooks/DeviceType'
 import Conditions, { State } from '@/src/ui/components/Conditions'
 import LandList from '@/src/ui/components/LandList'
+import NaverlandList from '@/src/ui/components/NaverlandList'
 import { Box, Fade, Stack, Typography } from '@/src/ui/mui'
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined'
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined'
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
 
-const Oneroom = () => {
-  const [landList, setLandList] = useState<PropertyInfo[]>([])
+import { filterState } from '../recoil-state'
 
-  const applySearch = async (state: State) => {
-    const itemIDs = await getOneroomIDs(state)
-    const list: PropertyInfo[] = await getLandList(itemIDs)
-    setLandList(list)
-  }
+const Oneroom = () => {
+  const path = usePathname()
+  const conditions = useRecoilValue(filterState)
+  const [landList, setLandList] = useState<PropertyInfo[]>([])
+  const [naverlandList, setNaverlandList] = useState<NaverlandItem>()
+  const [totalCount, setTotalCount] = useState<number>(0)
   const { isMobile } = useDeviceType()
   const [isShow, setIsShow] = useState(!isMobile)
+
+  const applySearch = useCallback(async (state: State) => {
+    if (state.site === 'naver') {
+      const naverlandAddress = await getNaverLandCortarNo({ x: Number(state.area.x), y: Number(state.area.y) })
+      const naverlist = await getNaverlandData(path.replace('/', ''), naverlandAddress, state)
+      setNaverlandList(naverlist)
+      if (state.page === 1) {
+        setTotalCount(naverlist.mapExposedCount)
+      }
+    } else if (state.site === 'zigbang') {
+      const itemIDs = await getOneroomIDs(state)
+      const list: PropertyInfo[] = await getLandList(itemIDs)
+      setLandList(list)
+    }
+  }, [path])
+
+  useEffect(() => {
+    if (isEmpty(conditions.area.x) || isEmpty(conditions.area.y)) return
+    applySearch(conditions)
+  }, [applySearch, conditions])
 
   return (
     <Stack height='100%' sx={{ flexDirection: { laptop: 'row', mobile: 'column' }, justifyContent: isMobile ? 'flex-start' : 'center' }}>
@@ -46,13 +71,19 @@ const Oneroom = () => {
       {isShow && (
         <Fade in={isShow} timeout={1000}>
           <Stack>
-            <Conditions onApply={applySearch}/>
+            <Conditions />
           </Stack>
        </Fade>
       )}
       <Box gap={2} sx={{ width: 400, height: 400 }}>
         <Fade in={true} timeout={1000}>
-          <Stack><LandList items={landList} /></Stack>
+          <Stack>
+            {conditions.site === 'zigbang' ? (
+              <LandList items={landList} />
+            ) : (
+              <NaverlandList item={naverlandList} totalCount={totalCount} />
+            )}
+          </Stack>
         </Fade>
       </Box>
     </Stack>
