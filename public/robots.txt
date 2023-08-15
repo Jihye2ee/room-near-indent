@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: /api
 
-Sitemap: https://jamie-playground.com/sitemap.xml
+Sitemap: https://findroomnearby.com/sitemap.xml
