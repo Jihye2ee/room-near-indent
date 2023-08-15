@@ -75,7 +75,7 @@ const Oneroom = () => {
           </Stack>
        </Fade>
       )}
-      <Box gap={2} sx={{ width: 400, height: 400 }}>
+      <Box gap={2} sx={{ width: isMobile ? '100%' : 400, height: 400 }}>
         <Fade in={true} timeout={1000}>
           <Stack>
             {conditions.site === 'zigbang' ? (
