@@ -1,11 +1,4 @@
 User-agent: *
-Allow: /
 Disallow: /api
-Disallow: /embed
 
-User-agent: googlebot
-Allow: /
-Disallow: /api
-Disallow: /embed
-
-Sitemap : https://jamie-playground/sitemap.xml
+Sitemap: https://jamie-playground.com/sitemap.xml
