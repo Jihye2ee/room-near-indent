@@ -9,49 +9,24 @@ type Section = {
   item_ids: number[]
 }
 
-export const getGeohash = async (search: string, serviceType: string) => {
-  const url = 'https://apis.zigbang.com/v2/search'
-  const queryParams = queryString.stringify({
-    leaseYn: 'N',
-    q: search,
-    serviceType: serviceType
-  })
-
-  const response = await fetch(`${url}?${queryParams}`, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
-    },
-    method: 'GET',
-  })
-
-  if (!response.ok) throw new Error()
-
-  const data = await response.json()
-  const { lat, lng } = data.items[0]
-
-  const geohasgValue = geohash.encode(lat, lng, 5)
-
-  return geohasgValue
-}
-
-export const getVillaItmeIDs = async (parmas: State) => {
+export const getVillaItmeIDs = async (params: State) => {
   const url = 'https://apis.zigbang.com/v2/items'
+  const geohashValue = geohash.encode(params.area.y, params.area.x, 5)
   const queryParams = queryString.stringify({
-    deposit_gteq: parmas.deposit[0],
-    deposit_lteq: parmas.deposit[1],
-    rent_gteq: parmas.type === 'rent' ? parmas.rent[0] : undefined,
-    rent_lteq:  parmas.type === 'rent' ? parmas.rent[1] : undefined,
-    sales_type_in: parmas.type === 'rent' ? '월세': '전세',
-    radius: 1,
+    deposit_gteq: params.deposit[0],
+    deposit_lteq: params.deposit[1],
+    rent_gteq: params.type === 'rent' ? params.rent[0] : '',
+    rent_lteq:  params.type === 'rent' ? params.rent[1] : '',
+    sales_type_in: params.type === 'rent' ? '월세': '전세',
     domain: 'zigbang',
-    subway_id: parmas.area,
     needHasNoFiltered: true,
-    new_villa: true
+    new_villa: true,
+    geohash: geohashValue
   })
 
   const response = await fetch(`${url}?${queryParams}`, {
     headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
     },
     method: 'GET',
   })

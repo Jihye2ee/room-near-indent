@@ -1,3 +1,4 @@
+import geohash from 'ngeohash'
 import queryString from 'query-string'
 
 import { State } from '@/src/ui/components/Conditions'
@@ -8,19 +9,20 @@ type Section = {
   item_ids: number[]
 }
 
-export const getOneroomIDs = async (parmas: State) => {
+export const getOneroomIDs = async (params: State) => {
   const url = 'https://apis.zigbang.com/v2/items'
+  const geohashValue = geohash.encode(params.area.y, params.area.x, 5)
   const queryParams = queryString.stringify({
-    deposit_gteq: parmas.deposit[0],
-    deposit_lteq: parmas.deposit[1],
-    rent_gteq: parmas.type === 'rent' ? parmas.rent[0] : undefined,
-    rent_lteq:  parmas.type === 'rent' ? parmas.rent[1] : undefined,
-    sales_type_in: parmas.type === 'rent' ? '월세': '전세',
+    deposit_gteq: params.deposit[0],
+    deposit_lteq: params.deposit[1],
+    rent_gteq: params.type === 'rent' ? params.rent[0] : undefined,
+    rent_lteq:  params.type === 'rent' ? params.rent[1] : undefined,
+    sales_type_in: params.type === 'rent' ? '월세': '전세',
     radius: 1,
     domain: 'zigbang',
-    subway_id: parmas.area,
+    geohash: geohashValue,
     needHasNoFiltered: true,
-    service_type_eq:'원룸'
+    service_type_eq: '원룸'
   })
 
   const response = await fetch(`${url}?${queryParams}`, {

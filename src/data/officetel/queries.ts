@@ -1,24 +1,28 @@
+import geohash from 'ngeohash'
 import queryString from 'query-string'
 
 import { State } from '@/src/ui/components/Conditions'
+
+import { NaverlandAddressItem } from '../address/types'
 
 type Section = {
   type: string
   title: string
   item_ids: number[]
 }
-export const getOfficetelItemIDs = async (parmas: State) => {
+export const getOfficetelItemIDs = async (params: State) => {
   const url = 'https://apis.zigbang.com/v2/officetels'
+  const geohashValue = geohash.encode(params.area.y, params.area.x, 5)
   const queryParams = queryString.stringify({
-    deposit_gteq: parmas.deposit[0],
-    deposit_lteq: parmas.deposit[1],
-    rent_gteq: parmas.type === 'rent' ? parmas.rent[0] : undefined,
-    rent_lteq:  parmas.type === 'rent' ? parmas.rent[1] : undefined,
-    sales_type_in: parmas.type === 'rent' ? '월세': '전세',
-    radius: 1,
+    deposit_gteq: params.deposit[0],
+    deposit_lteq: params.deposit[1],
+    rent_gteq: params.type === 'rent' ? params.rent[0] : undefined,
+    rent_lteq:  params.type === 'rent' ? params.rent[1] : undefined,
+    sales_type_in: params.type === 'rent' ? '월세': '전세',
+    buildings: true,
     domain: 'zigbang',
-    subway_id: parmas.area,
     needHasNoFiltered: true,
+    geohash: geohashValue
   })
 
   const response = await fetch(`${url}?${queryParams}`, {
@@ -37,4 +41,24 @@ export const getOfficetelItemIDs = async (parmas: State) => {
   if (uniqueItemIds.length === 0) return Promise.resolve([])
 
   return uniqueItemIds
+}
+
+export const getNaverlandAddress = async (coords: { x: number, y: number }) => {
+  const url = 'https://new.land.naver.com/api/cortars'
+  const queryParams = queryString.stringify({
+    zoom: 16,
+    centerLat: coords.y,
+    centerLon: coords.x,
+  })
+
+  const response = await fetch(`${url}?${queryParams}`, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
+    },
+    method: 'GET',
+  })
+  if (!response.ok) throw new Error()
+
+  const data: NaverlandAddressItem = await response.json()
+  return data
 }
