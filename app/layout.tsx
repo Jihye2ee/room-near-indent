@@ -3,22 +3,22 @@ import localFont from 'next/font/local'
 import { ColorModeProvider } from '@/src/context/ColorModeContext'
 import Header from '@/src/ui/components/Header'
 
-import RootProvider from './Provider'
+import ThemeProvider from './ThemeProvider'
 
 import type { Metadata } from 'next'
 const pretendard = localFont({ src: '../public/fonts/PretendardVariable.woff2', variable: '--font-pretendard' })
 
 export const metadata: Metadata = {
-  title: 'Room for Indenter - 인덴터를 위한 방',
-  description: '회사 근처 집을 알아보고 계신가요? 편하게 검색하실 수 있습니다.',
+  title: 'Find room nearby - 원하는 곳 주변 매물 검색',
+  description: '회사 근처 집을 알아보고 계신가요? 여러 부동산 매물 검색 사이트를 한 곳에서 편하게 검색하세요!',
   openGraph: {
     type: 'website',
     locale: 'ko_KR',
-    siteName: 'Room for Indenter',
-    url: 'https://jamie-playground.com',
-    title: 'Room for Indenter - 인덴터를 위한 방',
+    siteName: 'Find room nearby',
+    url: 'https://findroomnearby.com',
+    title: 'Find room nearby - 원하는 곳 주변 매물 검색',
     description:
-      '회사 근처 집을 알아보고 계신가요? 편하게 검색하실 수 있습니다.',
+      '회사 근처 집을 알아보고 계신가요? 여러 부동산 매물 검색 사이트를 한 곳에서 편하게 검색하세요!',
   },
 }
 
@@ -43,15 +43,20 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <meta name="google-site-verification" content="CpVCplc-3RTh-cY6hgJPKyvXgKzLn97p98WDCKHfQbs" />
+        <meta name="google-site-verification" content="OCvbIh62SpLGOHBgsb_3MhcHJwq_NK3mUDmgMhocayM" />
       </head>
       <body className={pretendard.className}>
         <script dangerouslySetInnerHTML={{ __html: ColorModeScript }} />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script
+          type="text/javascript"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=73ff0f3832dc2af330ffea582903b997&libraries=services&autoload=false"
+        />
         <ColorModeProvider>
-          <RootProvider>
+          <ThemeProvider>
             <Header />
             {children}
-          </RootProvider>
+          </ThemeProvider>
         </ColorModeProvider>
       </body>
     </html>
