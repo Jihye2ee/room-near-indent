@@ -12,7 +12,7 @@ export const getNaverLandCortarNo = async (coords: { x: number, y: number }): Pr
       centerLon: coords.x,
     })
     const naverURL = `https://new.land.naver.com/api/cortars?${queryParams}`
-    const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
+    const url = `/api/naverland?url=${encodeURIComponent(naverURL)}`
     const response = await fetch(url)
     const data = await response.json()
     return data
@@ -57,7 +57,7 @@ export const getNaverLandList = async (item: NaverlandAddressItem, state: State)
       isPresale: true
     })
     const naverURL = `https://new.land.naver.com/api/complexes/single-markers/2.0?${queryParams}`
-    const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
+    const url = `/api/naverland?url=${encodeURIComponent(naverURL)}`
 
     const response = await fetch(url)
     const data = await response.json()
