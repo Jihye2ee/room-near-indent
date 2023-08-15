@@ -1,4 +1,5 @@
 import localFont from 'next/font/local'
+import Script from 'next/script'
 
 import { ColorModeProvider } from '@/src/context/ColorModeContext'
 import Header from '@/src/ui/components/Header'
@@ -47,8 +48,7 @@ export default function RootLayout({
       </head>
       <body className={pretendard.className}>
         <script dangerouslySetInnerHTML={{ __html: ColorModeScript }} />
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script
+        <Script
           type="text/javascript"
           src="//dapi.kakao.com/v2/maps/sdk.js?appkey=73ff0f3832dc2af330ffea582903b997&libraries=services&autoload=false"
         />
