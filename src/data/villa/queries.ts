@@ -9,7 +9,7 @@ type Section = {
   item_ids: number[]
 }
 
-export const getVillaItmeIDs = async (params: State) => {
+export const getVillaItemIDs = async (params: State) => {
   const url = 'https://apis.zigbang.com/v2/items'
   const geohashValue = geohash.encode(params.area.y, params.area.x, 5)
   const queryParams = queryString.stringify({
@@ -21,7 +21,7 @@ export const getVillaItmeIDs = async (params: State) => {
     domain: 'zigbang',
     needHasNoFiltered: true,
     new_villa: true,
-    geohash: geohashValue
+    geohash: geohashValue,
   })
 
   const response = await fetch(`${url}?${queryParams}`, {

@@ -15,6 +15,10 @@ export type PropertyInfo = {
   service_type: string
   size_m2: number
   title: string
+  random_location: {
+    lat: number
+    lng: number
+  }
 }
 
 export type NaverlandItem = {

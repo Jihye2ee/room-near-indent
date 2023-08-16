@@ -40,7 +40,10 @@ const Oneroom = () => {
     } else if (state.site === 'zigbang') {
       const itemIDs = await getOneroomIDs(state)
       const list: PropertyInfo[] = await getLandList(itemIDs)
-      setLandList(list)
+      const newList = list.filter(item =>
+        Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
+        && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
+      setLandList(newList)
     }
   }, [path])
 

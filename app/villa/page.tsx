@@ -8,7 +8,7 @@ import { useRecoilValue } from 'recoil'
 import { getNaverLandCortarNo, getNaverlandData } from '@/src/data/naverland/queries'
 import { getLandList } from '@/src/data/queries'
 import { NaverlandItem, PropertyInfo } from '@/src/data/types'
-import { getVillaItmeIDs } from '@/src/data/villa/queries'
+import { getVillaItemIDs } from '@/src/data/villa/queries'
 import useDeviceType from '@/src/hooks/DeviceType'
 import Conditions, { State } from '@/src/ui/components/Conditions'
 import LandList from '@/src/ui/components/LandList'
@@ -38,9 +38,12 @@ const Villa = () => {
         setTotalCount(naverlist.mapExposedCount)
       }
     } else if (state.site === 'zigbang') {
-      const itemIDs = await getVillaItmeIDs(state)
+      const itemIDs = await getVillaItemIDs(state)
       const list: PropertyInfo[] = await getLandList(itemIDs)
-      setLandList(list)
+      const newList = list.filter(item =>
+        Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
+        && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
+      setLandList(newList)
     }
   }, [path])
 

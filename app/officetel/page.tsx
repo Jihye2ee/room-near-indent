@@ -31,7 +31,10 @@ const Officetel = () => {
     if (state.site === 'zigbang') {
       const itemIDs = await getOfficetelItemIDs(state)
       const zigbangList: PropertyInfo[] = await getLandList(itemIDs)
-      setLandList(zigbangList)
+      const newList = zigbangList.filter(item =>
+        Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
+        && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
+      setLandList(newList)
     } else if (state.site === 'naver') {
       const naverlandAddress = await getNaverLandCortarNo({ x: Number(state.area.x), y: Number(state.area.y) })
       const naverlist = await getNaverlandData(path.replace('/', ''), naverlandAddress, state)
