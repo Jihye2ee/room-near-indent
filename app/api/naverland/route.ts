@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
         'Sec-Ch-Ua': '"Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"',
         'Sec-Ch-Ua-Mobile': '?0',
         'Sec-Ch-Ua-Platform': '"macOS"',
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlJFQUxFU1RBVEUiLCJpYXQiOjE2OTE3MzA1NzgsImV4cCI6MTY5MTc0MTM3OH0.QmPUgFWYvfzw1ZAgbyGU1vL6ET_yFq6aVGuklXyrFps'
+        'Authorization': `Bearer ${process.env.NAVER_LAND_TOKEN}`
       }
     })
     if (!response.ok) throw new Error()
