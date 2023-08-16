@@ -32,6 +32,7 @@
   "devDependencies": {
     "@svgr/webpack": "^8.0.1",
     "@types/lodash-es": "^4.17.8",
-    "@types/ngeohash": "^0.6.4"
+    "@types/ngeohash": "^0.6.4",
+    "server-only": "^0.0.1"
   }
 }
