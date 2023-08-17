@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url)
-    let url = searchParams.get('url')
-    if (!url || typeof url !== 'string') {
+    const url = req.nextUrl
+    const requestURL = url.searchParams.get('url')
+
+    if (!requestURL || typeof requestURL !== 'string') {
       return new Response('', {
         status: 400
       })
     }
-    const response = await fetch(url, {
+    const response = await fetch(requestURL, {
       headers: {
         'Host': 'new.land.naver.com',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
