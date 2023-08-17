@@ -12,7 +12,7 @@ export const getNaverLandCortarNo = async (coords: { x: number, y: number }): Pr
       centerLon: coords.x,
     })
     const naverURL = `https://new.land.naver.com/api/cortars?${queryParams}`
-    const url = `/api/naverland?url=${encodeURIComponent(naverURL)}`
+    const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
     const response = await fetch(url)
     const data = await response.json()
     return data
@@ -92,13 +92,11 @@ export const getNaverlandData = async (path: string, naverlandAddress: Naverland
 
   try {
     const naverURL = `https://new.land.naver.com/api/articles?${params}&articleState&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&minMaintenanceCost&maxMaintenanceCost`
-    const url = `/api/naverland?url=${encodeURIComponent(naverURL)}`
+    const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
     const response = await fetch(url)
-
     if (!response.ok) {
       throw new Error()
     }
-    console.log('[response.headers.get(application/json]', response.headers.get('application/json'))
     // if (response.headers.get('contentType')) {
     //   const data = await response.json()
     //   return data
