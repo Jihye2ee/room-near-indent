@@ -29,11 +29,11 @@ const NaverlandListItem = ({ item }: Props) => {
           <strong>{item.articleName}</strong>, {item.floorInfo}층, {item.tradeTypeCode === 'B1' ? item.dealOrWarrantPrc : `${item.dealOrWarrantPrc}/${item.rentPrc}`}, {item.area1}/{item.area2}m<sup>2</sup>
         </Typography>
         <Typography variant='body2' sx={{ fontWeight: 600 }}>{item.articleFeatureDesc}</Typography>
-        <Stack direction='row'>
-        {item.tagList.map((tag: string, index: number) => (
-          <Typography  key={`tag-${index}`} variant='body2' sx={{ display: 'inline-block', fontWeight: 500, backgroundColor: 'grey.200', p: 0.5, borderRadius: 1, color: 'grey.600' }}>{tag}</Typography>
-        ))}
-        </Stack>
+        <Box sx={{ mr: 0.5, mt: 0.5 }}>
+          {item.tagList.map((tag: string, index: number) => (
+            <Typography key={`tag-${index}`} variant='body2' sx={{ display: 'inline-block', fontWeight: 500, backgroundColor: 'grey.200', p: 0.5, mr: 0.5, mb: 0.5, borderRadius: 1, color: 'grey.600' }}>{tag}</Typography>
+          ))}
+        </Box>
       </Stack>
     </Stack>
   )
