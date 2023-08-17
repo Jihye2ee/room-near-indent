@@ -30,13 +30,20 @@ export async function GET(req: NextRequest) {
         'Authorization': `Bearer ${process.env.NAVER_LAND_TOKEN}`
       }
     })
-    if (!response.ok) throw new Error()
+    if (!response.ok) {
+      return NextResponse.json({ error: `${response.status, response.statusText} 에러가 발생했습니다.` }, { status: 500 })
+    }
 
-    const data = await response.json()
+    const contentType = response.headers.get('Content-Type')
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json()
+      return NextResponse.json(data, { status: 200 })
+    } else {
+      return NextResponse.json('contentType is not application/json', { status: 500 });
+    }
 
-    return NextResponse.json(data, { status: 200 })
   } catch(error) {
     console.log('[error]', error)
-    return []
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
