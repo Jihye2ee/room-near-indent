@@ -95,9 +95,17 @@ export const getNaverlandData = async (path: string, naverlandAddress: Naverland
     const url = `/api/naverland?url=${encodeURIComponent(naverURL)}`
     const response = await fetch(url)
 
-    if (!response.ok) throw new Error()
+    if (!response.ok) {
+      throw new Error()
+    }
+    console.log('[response.headers.get(application/json]', response.headers.get('application/json'))
+    // if (response.headers.get('contentType')) {
+    //   const data = await response.json()
+    //   return data
+    // } else {
+    //   throw new Error()
+    // }
     const data = await response.json()
-
     return data
   } catch(error) {
     return {}
