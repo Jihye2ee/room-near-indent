@@ -1,5 +1,3 @@
-import 'server-only'
-
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
@@ -17,6 +15,7 @@ export async function GET(req: NextRequest) {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
         'Referer': 'https://new.land.naver.com/houses',
         'Content-Type': 'application/json;charset=UTF-8',
+        'Connection': 'keep-alive',
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
         'Sec-Fetch-Site': 'same-origin',
@@ -26,7 +25,7 @@ export async function GET(req: NextRequest) {
         'Sec-Ch-Ua': '"Not/A)Brand";v="99", "Google Chrome";v="115", "Chromium";v="115"',
         'Sec-Ch-Ua-Mobile': '?0',
         'Sec-Ch-Ua-Platform': '"macOS"',
-        'Authorization': `Bearer ${process.env.NAVER_LAND_TOKEN}`
+        'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IlJFQUxFU1RBVEUiLCJpYXQiOjE2OTIyMDkyODEsImV4cCI6MTY5MjIyMDA4MX0.fSGxU_Oe7qaON0fHqqcJIxmEgnY1bPhAdMnHQ6hsn5E`
       }
     })
     if (!response.ok) throw new Error()

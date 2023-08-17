@@ -60,6 +60,8 @@ export const getNaverLandList = async (item: NaverlandAddressItem, state: State)
     const url = `/api/naverland?url=${encodeURIComponent(naverURL)}`
 
     const response = await fetch(url)
+    if (!response.ok) throw new Error()
+
     const data = await response.json()
 
     return data
@@ -82,18 +84,22 @@ export const getNaverlandData = async (path: string, naverlandAddress: Naverland
     areaMin: 0,
     areaMax: 900000000,
     showArticle: false,
-    sameAddressGroup: false,
+    sameAddressGroup: true,
     priceType: 'RETAIL',
     directions: '',
-    page: state.page ? state.page : 1,
+    page: state.page ? state.page : 1
   })
 
-  const naverURL = `https://new.land.naver.com/api/articles?${params}`
-  const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
-  const response = await fetch(url)
-  const data = await response.json()
+  try {
+    const naverURL = `https://new.land.naver.com/api/articles?${params}&articleState&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&minMaintenanceCost&maxMaintenanceCost`
+    const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
+    const response = await fetch(url)
 
-  console.log('[data]', data)
-  return data
+    if (!response.ok) throw new Error()
+    const data = await response.json()
 
+    return data
+  } catch(error) {
+    return {}
+  }
 }
