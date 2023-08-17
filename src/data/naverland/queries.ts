@@ -92,7 +92,7 @@ export const getNaverlandData = async (path: string, naverlandAddress: Naverland
 
   try {
     const naverURL = `https://new.land.naver.com/api/articles?${params}&articleState&oldBuildYears&recentlyBuildYears&minHouseHoldCount&maxHouseHoldCount&minMaintenanceCost&maxMaintenanceCost`
-    const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
+    const url = `/api/naverland?url=${encodeURIComponent(naverURL)}`
     const response = await fetch(url)
 
     if (!response.ok) throw new Error()
