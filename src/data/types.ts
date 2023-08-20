@@ -78,3 +78,69 @@ export type Article = {
   tradeTypeCode: string
   tagList: string[]
 }
+
+export type ArticleData = {
+  more: boolean
+  page: number
+  body: ArticleItem[]
+}
+
+export type ArticleItem = {
+  atclNo: string
+  cortarNo: string
+  atclNm: string
+  repImgUrl: string
+  atclFetrDesc: string
+  atclStatCd: string // "R0",
+  rletTpCd: string //"C02",
+  uprRletTpCd: string // "C03",
+  rletTpNm: string // "빌라",
+  tradTpCd: string // "B1",
+  tradTpNm: string // "전세",
+  vrfcTpCd: string // "NONE",
+  flrInfo: string //"4/5",
+  prc: number // 15000,
+  rentPrc: number // 0,
+  hanPrc: string // "1억 5,000",
+  spc1: string //"26",
+  spc2: string //"26.88",
+  direction: string //"남향",
+  atclCfmYmd: string // "23.08.18.",
+  lat: number // 37.5389,
+  lng: number // 127.049185,
+  tagList: string[]
+  bildNm: string // "",
+  minute: number // 0,
+  sameAddrCnt: number // 1,
+  sameAddrDirectCnt: number // 0,
+  cpid: string //"KAR",
+  cpNm: string //"한국공인중개사협회",
+  cpCnt: number // 1,
+  rltrNm: string // "사랑공인중개사사무소",
+  directTradYn: string //"N",
+  minMviFee: number // 0,
+  maxMviFee: number // 0,
+  etRoomCnt: number // 0,
+  tradePriceHan: string // "",
+  tradeRentPrice: number //0,
+  tradeCheckedByOwner: boolean // false,
+  dtlAddrYn: string // "N",
+  dtlAddr: string // ""
+}
+
+export type ClusterData = {
+  code: string
+  data: {
+    ARTICLE: Cluster[]
+  }
+  z: number
+}
+
+export type Cluster = {
+  lgeo: string // "2122110211",
+  count: number // 5,
+  z: number // 14,
+  lat: number // 37.53710939,
+  lon: number // 127.05041504,
+  psr: number // 0.5
+}

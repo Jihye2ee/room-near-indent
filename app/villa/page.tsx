@@ -5,9 +5,11 @@ import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
-import { getNaverLandCortarNo, getNaverlandData } from '@/src/data/naverland/queries'
+import { getCortarsInfo } from '@/src/data/local/queries'
+import { CortarInfo } from '@/src/data/local/types'
+import { getNaverlandData, getNaverLandDataTotalCount } from '@/src/data/naverland/queries'
 import { getLandList } from '@/src/data/queries'
-import { NaverlandItem, PropertyInfo } from '@/src/data/types'
+import { ArticleData, ClusterData, NaverlandItem, PropertyInfo } from '@/src/data/types'
 import { getVillaItemIDs } from '@/src/data/villa/queries'
 import useDeviceType from '@/src/hooks/DeviceType'
 import Conditions, { State } from '@/src/ui/components/Conditions'
@@ -24,18 +26,22 @@ const Villa = () => {
   const path = usePathname()
   const conditions = useRecoilValue(filterState)
   const [landList, setLandList] = useState<PropertyInfo[]>([])
-  const [naverlandList, setNaverlandList] = useState<NaverlandItem>()
+  const [naverlandList, setNaverlandList] = useState<ArticleData>()
   const [totalCount, setTotalCount] = useState<number>(0)
   const { isMobile } = useDeviceType()
   const [isShow, setIsShow] = useState(!isMobile)
 
   const applySearch = useCallback(async (state: State) => {
     if (state.site === 'naver') {
-      const naverlandAddress = await getNaverLandCortarNo({ x: Number(state.area.x), y: Number(state.area.y) })
-      const naverlist = await getNaverlandData(path.replace('/', ''), naverlandAddress, state)
+      // TODO: page 바뀌는 것만 getMNaverlandData 조회 할 수 있도록 개선
+      const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
+      const cortarNo = cortarsInfo.documents.filter(document => document.region_type === 'B')?.[0].code
+      const clusterData: ClusterData = await getNaverLandDataTotalCount(path.replace('/', ''), state, cortarNo)
+      const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
+      const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
       setNaverlandList(naverlist)
       if (state.page === 1) {
-        setTotalCount(naverlist.mapExposedCount)
+        setTotalCount(totalCount)
       }
     } else if (state.site === 'zigbang') {
       const itemIDs = await getVillaItemIDs(state)
