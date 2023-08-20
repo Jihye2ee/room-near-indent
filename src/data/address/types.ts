@@ -38,22 +38,6 @@ type RoadAddress = {
   zone_no: string
 }
 
-export type NaverlandAddressItem = {
-  centerLat: number
-  centerLon: number
-  cityName: string
-  cityNo: string
-  cortarName: string
-  cortarNo: string
-  cortarType: string
-  cortarVertexLists: Array<Array<[number, number]>>,
-  cortarZoom: number
-  divisionName: string
-  divisionNo: string
-  sectorName: string
-  sectorNo: string
-}
-
 // southwest 좌표정보: leftLon, bottomLat
 // northeast 좌표정보: rightLon, topLat
 export type Bounds = {

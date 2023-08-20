@@ -2,22 +2,6 @@ import queryString from 'query-string'
 
 import { State } from '@/src/ui/components/Conditions'
 
-import { NaverlandAddressItem } from '../address/types'
-
-export const getNaverLandCortarNo = async (coords: { x: number, y: number }): Promise<NaverlandAddressItem> => {
-  try {
-    const queryParams = queryString.stringify({
-      zoom: 16,
-      centerLat: coords.y,
-      centerLon: coords.x,
-    })
-    const naverURL = `https://new.land.naver.com/api/cortars?${queryParams}`
-    const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
-  } catch(error) {
-    throw error
   }
 }
 

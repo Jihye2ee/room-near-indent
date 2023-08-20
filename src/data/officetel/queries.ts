@@ -3,8 +3,6 @@ import queryString from 'query-string'
 
 import { State } from '@/src/ui/components/Conditions'
 
-import { NaverlandAddressItem } from '../address/types'
-
 type Section = {
   type: string
   title: string
@@ -41,24 +39,4 @@ export const getOfficetelItemIDs = async (params: State) => {
   if (uniqueItemIds.length === 0) return Promise.resolve([])
 
   return uniqueItemIds
-}
-
-export const getNaverlandAddress = async (coords: { x: number, y: number }) => {
-  const url = 'https://new.land.naver.com/api/cortars'
-  const queryParams = queryString.stringify({
-    zoom: 16,
-    centerLat: coords.y,
-    centerLon: coords.x,
-  })
-
-  const response = await fetch(`${url}?${queryParams}`, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36',
-    },
-    method: 'GET',
-  })
-  if (!response.ok) throw new Error()
-
-  const data: NaverlandAddressItem = await response.json()
-  return data
 }
