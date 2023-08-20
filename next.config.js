@@ -24,6 +24,9 @@ const nextConfig = {
       },
     ],
   },
+  env: {
+    'KAKAO_LOCAL_REST_API_KEY': '82d9ab1000c504dd128b37c78bb9af48'
+  }
 }
 
 module.exports = nextConfig
