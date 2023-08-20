@@ -4,14 +4,14 @@ import Link from 'next/link'
 import { useRecoilState } from 'recoil'
 
 import { filterState } from '@/app/recoil-state'
-import { Article, NaverlandItem } from '@/src/data/types'
+import { Article, ArticleData, ArticleItem, NaverlandItem } from '@/src/data/types'
 import StyledDataGrid from '@/src/ui/atoms/DataGrid'
 import { Stack, Typography } from '@/src/ui/mui'
 
 import NaverlandListItem from './NaverlandListItem'
 
 type Props = {
-  item?: NaverlandItem
+  item?: ArticleData
   totalCount?: number
 }
 
@@ -23,12 +23,12 @@ const NaverlandList = ({ item, totalCount }: Props) => {
       <Stack tabIndex={0} mt={2}>
         <Typography aria-label={`총 ${totalCount}`} variant='body1' sx={{ fontWeight: 500, ml: 1, mb: 1, color: 'grey.600' }}>총 {totalCount}개</Typography>
       </Stack>
-      <StyledDataGrid<Article>
+      <StyledDataGrid<ArticleItem>
         getRowHeight={() => 'auto'}
         autoHeight
         rowCount={totalCount || 0}
-        rows={item?.articleList || []}
-        getRowId={(row) => row.articleNo}
+        rows={item?.body || []}
+        getRowId={(row) => row.atclNo}
         columns={[
           {
             field: 'item_id',
@@ -48,7 +48,7 @@ const NaverlandList = ({ item, totalCount }: Props) => {
             align: 'center',
             sortable: false,
             renderCell: ({ row }) =>
-              <Link aria-label='더보기' href={`https://new.land.naver.com/houses?ms=${row.latitude},${row.longitude},16&a=VL&e=RETAIL&articleNo=${row.articleNo}`} target='_blank'>
+              <Link aria-label='더보기' href={`https://new.land.naver.com/houses?ms=${row.lat},${row.lng},16&a=VL&e=RETAIL&articleNo=${row.atclNo}`} target='_blank'>
                 <Image src='/naverland-logo.png' alt='네이버부동산 더보기' width={20} height={20} />
               </Link>
           },
@@ -61,7 +61,7 @@ const NaverlandList = ({ item, totalCount }: Props) => {
             }
           }
         }}
-        onPaginationModelChange={(paginationModel) => {
+        onPaginationModelChange={(paginationModel: any) => {
           setState({ ...state, page: paginationModel.page + 1 })
         }}
         paginationMode='server'
