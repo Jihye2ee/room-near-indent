@@ -14,16 +14,16 @@ export const filterState = atom<State>({
       address: null,
       address_name: '',
       address_type: '',
-      x: '',
-      y: '',
+      x: '126.570667',
+      y: '33.450701',
       road_address: null,
       bounds: {
         bottomLat: '37.5298390',
         leftLon: '127.0388926',
         rightLon: '127.0751460',
         topLat: '37.5520865',
-      }
+      },
     },
-    page: 1,
+    cortarNo: '',
   }
 })
