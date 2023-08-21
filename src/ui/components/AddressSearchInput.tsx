@@ -1,8 +1,10 @@
 
 import { debounce } from 'lodash-es'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
-import { Bounds, KaKaoAddressItem } from '@/src/data/address/types'
+import { filterState } from '@/app/recoil-state'
+import { KaKaoAddressItem } from '@/src/data/address/types'
 import { Autocomplete, Box, SxProps, Typography } from '@/src/ui/mui'
 import { calculateBounds } from '@/src/utils/calculateBounds'
 import { Search } from '@mui/icons-material'
@@ -13,6 +15,7 @@ type Props = {
   onChange: (value: KaKaoAddressItem) => void
 }
 const AddressSearchInput = ({ onChange }: Props) => {
+  const conditions = useRecoilValue(filterState)
   const [options, setOptions] = useState<KaKaoAddressItem[]>([])
   const handleOnChange = ((value: KaKaoAddressItem | null) => {
     if (!value) return
@@ -36,13 +39,10 @@ const AddressSearchInput = ({ onChange }: Props) => {
   }, 500
   )
 
-  useEffect(() => {
-    window.kakao.maps.load(() => {})
-  }, [])
-
   return (
     <Autocomplete
       id='company-address-search'
+      defaultValue={conditions.area}
       onInputChange={handleOnInputChange}
       disablePortal
       disableClearable
@@ -52,7 +52,7 @@ const AddressSearchInput = ({ onChange }: Props) => {
       noOptionsText='검색 결과가 없습니다'
       popupIcon={<Search sx={{ fontSize: 16 }} />}
       getOptionLabel={(option) => option.address_name}
-      isOptionEqualToValue={(option, selected) => option.x === selected.x && option.y === selected.y}
+      isOptionEqualToValue={(option, selected) => option.address_name === selected.address_name}
       renderOption={(props, option) => {
         return (
           <Box component='li' {...props} key={`${props.id}`}>
@@ -83,8 +83,8 @@ const AddressSearchInput = ({ onChange }: Props) => {
 export default AddressSearchInput
 
 const autoCompleteSx: SxProps = {
-  width: '300px',
-  ml: 1,
+  width: '350px',
+  ml: 2,
   mt: 1,
   mb: 2,
   borderRadius: '6px',

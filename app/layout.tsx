@@ -48,10 +48,6 @@ export default function RootLayout({
       </head>
       <body className={pretendard.className}>
         <script dangerouslySetInnerHTML={{ __html: ColorModeScript }} />
-        <Script
-          type="text/javascript"
-          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=73ff0f3832dc2af330ffea582903b997&libraries=services&autoload=false"
-        />
         <ColorModeProvider>
           <ThemeProvider>
             <Header />

@@ -8,15 +8,15 @@ import DepositPriceSlider from '@/src/ui/components/DepositPriceSlider'
 import RentPriceSlider from '@/src/ui/components/RentPriceSlider'
 import { Stack, ToggleButtonGroup, Typography } from '@/src/ui/mui'
 
-import AddressSearchInput from './AddressSearchInput'
-
 export type State = {
   site: 'naver' | 'zigbang'
+  search?: string
   area: KaKaoAddressItem
   type: string
   deposit: number[]
   rent: number[]
-  page?: number
+  totalCount?: number
+  cortarNo: string
 }
 
 const Conditions = () => {
@@ -42,9 +42,6 @@ const Conditions = () => {
           <Typography variant='body2'>네이버<br/>부동산</Typography>
         </ToggleButton>
       </ToggleButtonGroup>
-      <Typography variant='body2' mt={2}>지역 선택</Typography>
-      <AddressSearchInput onChange={(value: KaKaoAddressItem) => setState({ ...state, area: value })}/>
-
       <Typography variant='body2' mt={2}>거래 유형</Typography>
       <ToggleButtonGroup
         value={state.type}
