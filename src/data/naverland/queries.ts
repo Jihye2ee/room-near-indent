@@ -19,7 +19,7 @@ export const getNaverLandDataTotalCount = async (path: string, state: State, cor
     rgt: state.area.bounds.rightLon,
     wprcMin: state.deposit[0],
     wprcMax: state.deposit[1],
-    cortarNo: state.area.address?.b_code || cortarNo,
+    cortarNo: cortarNo || state.area.address?.b_code,
   })
   const naverURL = `https://m.land.naver.com/cluster/clusterList?${queryParams}`
   const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
@@ -32,7 +32,7 @@ export const getNaverLandDataTotalCount = async (path: string, state: State, cor
   return data
 }
 
-export const getNaverlandData = async (path: string, state: State, totalCount: number, cortarNo: string) => {
+export const getNaverlandData = async (path: string, state: State, totalCount: number, cortarNo: string, page?: number) => {
   const queryParams = queryString.stringify({
     rletTpCd: path === 'officetel' ? 'OPST' : path === 'villa' ? 'VL' : 'OR',
     tradTpCd: state.type === 'deposit' ? 'B1' : 'B2',
@@ -45,9 +45,9 @@ export const getNaverlandData = async (path: string, state: State, totalCount: n
     rgt: state.area.bounds.rightLon,
     wprcMin: state.deposit[0],
     wprcMax: state.deposit[1],
-    cortarNo: state.area.address?.b_code || cortarNo,
+    cortarNo: cortarNo || state.area.address?.b_code,
     totCnt: totalCount,
-    page: state.page ? state.page : 1
+    page: page ? page : 1
   })
   const naverURL = `https://m.land.naver.com/cluster/ajax/articleList?${queryParams}`
   const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
