@@ -1,10 +1,13 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { useCallback } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { filterState } from '@/app/recoil-state'
-import { Article, ArticleData, ArticleItem, NaverlandItem } from '@/src/data/types'
+import { getNaverlandData } from '@/src/data/naverland/queries'
+import { ArticleData, ArticleItem } from '@/src/data/types'
 import StyledDataGrid from '@/src/ui/atoms/DataGrid'
 import { Stack, Typography } from '@/src/ui/mui'
 
@@ -12,12 +15,11 @@ import NaverlandListItem from './NaverlandListItem'
 
 type Props = {
   item?: ArticleData
-  totalCount?: number
+  totalCount: number
+  handlePagination: (page: number) => void
 }
 
-const NaverlandList = ({ item, totalCount }: Props) => {
-  const [state, setState] = useRecoilState(filterState)
-
+const NaverlandList = ({ item, totalCount, handlePagination }: Props) => {
   return (
     <Stack tabIndex={0} aria-label='매물 목록' sx={{ width: '100%', mb: 22 }}>
       <Stack tabIndex={0} mt={2}>
@@ -35,7 +37,6 @@ const NaverlandList = ({ item, totalCount }: Props) => {
             headerName: '매물 정보',
             headerAlign: 'center',
             flex: 0.85,
-            align: 'center',
             sortable: false,
             renderCell: ({ row }) => {
               return <NaverlandListItem item={row} />
@@ -62,7 +63,7 @@ const NaverlandList = ({ item, totalCount }: Props) => {
           }
         }}
         onPaginationModelChange={(paginationModel: any) => {
-          setState({ ...state, page: paginationModel.page + 1 })
+          handlePagination(paginationModel.page + 1)
         }}
         paginationMode='server'
       />
