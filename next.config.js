@@ -1,6 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   swcMinify: true,
+  async headers() {
+    return [{
+      source: '/(.*)',
+      headers: [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-if-error=10800"
+        }
+      ]
+    }]
+  },
   modularizeImports: {
     '@mui/icons-material/?(((\\w*)?/?)*)': {
       transform: '@mui/icons-material/{{ matches.[1] }}/{{member}}',
