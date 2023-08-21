@@ -12,7 +12,7 @@ const Header = () => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   return (
-    <nav aria-label='Main Navigation' style={{ position: 'sticky', top: 0 }}>
+    <nav aria-label='Main Navigation' style={{ position: 'sticky', top: 0, zIndex: 9999 }}>
       <Stack direction='row' flexWrap='wrap' alignItems='center' justifyContent='space-between' width='100%' p={1.5} sx={{ backgroundColor: 'grey.100' }}>
         <Stack direction='row' alignItems='center' spacing={3} sx={{ display: { laptop: 'flex', mobile: 'none' } }}>
           <Stack
@@ -56,7 +56,6 @@ const Header = () => {
           <Stack
             aria-label='메뉴 열기'
             component='button'
-            p={1}
             sx={{ border: 'none', textAlign: 'center',  cursor: 'pointer', backgroundColor: 'grey.100' }}
             onClick={() => setOpen(true)}
           >
@@ -86,7 +85,8 @@ const menuName: SxProps = {
 }
 
 const drawerStyleProp: SxProps = {
-  '.css-10cyd05-MuiPaper-root-MuiDrawer-paper': {
+  zIndex: 99999,
+  '.MuiPaper-root-MuiDrawer-paper': {
     backgroundColor: 'grey.200',
   }
 }
