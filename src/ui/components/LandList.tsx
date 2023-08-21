@@ -28,8 +28,7 @@ const LandList = ({ items }: Props) => {
             field: 'item_id',
             headerName: '매물 정보',
             headerAlign: 'center',
-            flex: 0.85,
-            align: 'center',
+            flex: 0.9,
             sortable: false,
             renderCell: ({ row }) => {
               return <LandListItem item={row} />
@@ -38,7 +37,7 @@ const LandList = ({ items }: Props) => {
           {
             field: '',
             headerName: '더보기',
-            flex: 0.15,
+            flex: 0.1,
             align: 'center',
             sortable: false,
             renderCell: ({ row }) =>
