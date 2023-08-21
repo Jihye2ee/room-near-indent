@@ -10,33 +10,33 @@ type Props = {
   onChange: (value: number[]) => void
 }
 
+export const depositMarks = [
+  {
+    value: 0,
+    label: '최소'
+  },
+  {
+    value: 5000,
+    label: '5천'
+  },
+  {
+    value: 15000,
+    label: '1억 5천'
+  },
+  {
+    value: 25000,
+    label: '2억 5천'
+  },
+  {
+    value: 40000,
+    label: '최대'
+  },
+]
+
 const DepositPriceSlider = ({ value, onChange }: Props) => {
   const valueText = useCallback((value: number[]) => {
     return `최소 ${value[0]}만원 최대 ${value[1]}만원`
   }, [])
-
-  const marks = [
-    {
-      value: 0,
-      label: '최소'
-    },
-    {
-      value: 5000,
-      label: '5천'
-    },
-    {
-      value: 15000,
-      label: '1억 5천'
-    },
-    {
-      value: 25000,
-      label: '2억 5천'
-    },
-    {
-      value: 40000,
-      label: '최대'
-    },
-  ]
 
   return (
     <Stack>
@@ -46,7 +46,7 @@ const DepositPriceSlider = ({ value, onChange }: Props) => {
           sx={{ m: 1 }}
           min={0}
           max={40000}
-          marks={marks}
+          marks={depositMarks}
           step={null}
           value={value}
           onChange={(_, newValue) => onChange(newValue as number[])}
