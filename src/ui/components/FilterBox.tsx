@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { filterState } from '@/app/recoil-state'
@@ -62,21 +62,23 @@ const FilterBox = ({ isOpen, open }: Props) => {
   }, [conditions.area])
 
   return (
-    <Stack position={{ laptop: 'absolute', mobile: 'sticky' }} direction='column' sx={{ top: { laptop: 100, mobile: -1 }, left: { laptop: 20, mobile: 0 }, zIndex: 9999, backgroundColor: 'grey.100' }} width={400}>
+    <Stack position={{ laptop: 'absolute', mobile: 'sticky' }} direction='column' sx={{ top: { laptop: 100, mobile: -1 }, left: { laptop: 20, mobile: 0 }, zIndex: 9999, backgroundColor: 'grey.100' }} width={{ laptop: 400, tablet: '100%', mobile: '100%' }}>
       <Stack>
         <AddressSearchInput onChange={(value: KaKaoAddressItem) => setState({ ...conditions, area: value })}/>
       </Stack>
       <Stack position='relative' direction='row' ml={2} mb={1} spacing={1}>
         <Typography
+          component='button'
           variant='body2'
-          sx={{ p: 1, border: '0.5px solid', borderColor: 'grey.500', borderRadius: 1, }}
+          sx={{ p: 1, border: '0.5px solid', borderColor: 'grey.500', borderRadius: 1, backgroundColor: 'grey.100' }}
           onClick={() => open(!isOpen)}
         >
             {conditions.site}
         </Typography>
         <Typography
           variant='body2'
-          sx={{ p: 1, border: '0.5px solid', borderColor: 'grey.500', borderRadius: 1, }}
+          component='button'
+          sx={{ p: 1, border: '0.5px solid', borderColor: 'grey.500', borderRadius: 1, backgroundColor: 'grey.100' }}
           onClick={() => open(!isOpen)}
         >
             {conditions.type === 'deposit'
@@ -85,13 +87,22 @@ const FilterBox = ({ isOpen, open }: Props) => {
             }
         </Typography>
       </Stack>
-      <Box position='relative' onClick={() => open(!isOpen)} sx={{ cursor: 'pointer' }}>
+      <Box role='dialog' aria-hidden={!isOpen} position='relative' onClick={() => open(!isOpen)} sx={{ cursor: 'pointer' }} width={{ laptop: 400, tablet: '100%', mobile: '100%' }}>
         {isOpen && (<>
           {isMobile && <Stack position='fixed' sx={{ zIndex: 10, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.7)', overflow: 'hidden' }} />}
-          <Stack position='absolute' sx={{ top: '-1px', left: 0, right: 0, bottom: 0, zIndex: 99 }} onClick={(event) => event.stopPropagation()}>
+          <Stack position='absolute' sx={{ top: '-1px', left: 0, right: 0, bottom: 0, zIndex: 99, }} width={{ laptop: 400, tablet: '100%', mobile: '100%' }} onClick={(event) => event.stopPropagation()}>
             <Fade in={true} timeout={1000}>
               <Stack sx={{ backgroundColor: 'grey.100' }}>
                 <Conditions />
+                <Stack
+                  flex={1}
+                  component='button'
+                  sx={{ border: 'none', background: 'none', m: 2, height: 52 }}
+                  onClick={() => open(!isOpen)}
+                  onKeyDown={(e) => e.key === 'Enter' && open(!isOpen)}
+                >
+                  <Typography p={2} width='100%' sx={{ fontSize: '14px', fontWeight: 600, border: '1px solid', bordercolor: 'grey.400', borderRadius: 2, color: 'grey.800' }}>적용하기</Typography>
+                </Stack>
               </Stack>
             </Fade>
           </Stack>

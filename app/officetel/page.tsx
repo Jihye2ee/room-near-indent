@@ -36,7 +36,6 @@ const Officetel = () => {
         && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
       setLandList(newList)
     } else if (state.site === 'naver') {
-      console.log('[page 제외한게]', state)
       const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
       const cortarNo = cortarsInfo.documents.filter(document => document.region_type === 'B')?.[0].code
       const clusterData: ClusterData = await getNaverLandDataTotalCount(path.replace('/', ''), state, cortarNo)
@@ -63,7 +62,7 @@ const Officetel = () => {
     <Stack sx={{ flexDirection: { laptop: 'row', mobile: 'column' }, height: 'calc(100% - 64px)', overflowX: 'hidden', overflowY: filterOpen ? 'hidden' : 'auto', backgroundColor: 'grey.100' }}>
       <Stack position='relative' id='map' width='100%' height='100%' flex={0.7} display={{ laptop: 'block', tablet: 'none', mobile: 'none' }} />
       <FilterBox isOpen={filterOpen} open={setFilterOpen} />
-      <Stack flex={{ laptop: 0.3, mobile: 1 }} gap={2} sx={{ width: { laptop: 400, mobile: '100%' }, height: '100%', overflowY: 'auto', backgroundColor: 'grey.100' }}>
+      <Stack aria-hidden={filterOpen} flex={{ laptop: 0.3, mobile: 1 }} gap={2} sx={{ width: { laptop: 400, mobile: '100%' }, height: '100%', overflowY: 'auto', backgroundColor: 'grey.100' }}>
         <Fade in={true} timeout={1000}>
           <Stack mx={1}>
             {conditions.site === 'zigbang' ? (

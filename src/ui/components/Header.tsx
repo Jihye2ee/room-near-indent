@@ -12,7 +12,7 @@ const Header = () => {
   const router = useRouter()
   const [open, setOpen] = useState(false)
   return (
-    <nav aria-label='Main Navigation' style={{ position: 'sticky', top: 0, zIndex: 9999 }}>
+    <nav aria-label='Main Navigation' style={{ position: 'sticky', top: 0, zIndex: 9999 }} tabIndex={0}>
       <Stack direction='row' flexWrap='wrap' alignItems='center' justifyContent='space-between' width='100%' p={1.5} sx={{ backgroundColor: 'grey.100' }}>
         <Stack direction='row' alignItems='center' spacing={3} sx={{ display: { laptop: 'flex', mobile: 'none' } }}>
           <Stack
@@ -86,7 +86,12 @@ const menuName: SxProps = {
 
 const drawerStyleProp: SxProps = {
   zIndex: 99999,
-  '.MuiPaper-root-MuiDrawer-paper': {
+  '.MuiPaper-root': {
     backgroundColor: 'grey.200',
+    color: 'grey.800',
+  },
+  '.MuiPaper-root .MuiDrawer-paper': {
+    backgroundColor: 'grey.200',
+    color: 'grey.800',
   }
 }
