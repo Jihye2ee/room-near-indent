@@ -15,6 +15,7 @@ import useDeviceType from '@/src/hooks/DeviceType'
 import Conditions, { State } from '@/src/ui/components/Conditions'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
+import MapComponent from '@/src/ui/components/MapComponent'
 import NaverlandList from '@/src/ui/components/NaverlandList'
 import { Box, Fade, Stack, Typography } from '@/src/ui/mui'
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined'
@@ -52,10 +53,10 @@ const Villa = () => {
     }
   }, [path])
 
-  const handlePagination = useCallback(async (page: number) => {
+  const handlePagination = async (page: number) => {
     const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), conditions, totalCount, cortarNo, page)
     setNaverlandList(naverlist)
-  }, [])
+  }
 
   useEffect(() => {
     if (isEmpty(conditions.area.x) || isEmpty(conditions.area.y)) return
@@ -64,7 +65,7 @@ const Villa = () => {
 
   return (
     <Stack sx={{ flexDirection: { laptop: 'row', mobile: 'column' }, height: 'calc(100% - 64px)', overflowX: 'hidden', overflowY: filterOpen ? 'hidden' : 'auto', backgroundColor: 'grey.100' }}>
-      <Stack position='relative' id='map' width='100%' height='100%' flex={0.7} display={{ laptop: 'block', tablet: 'none', mobile: 'none' }} />
+      <MapComponent />
       <FilterBox isOpen={filterOpen} open={setFilterOpen} />
       <Stack flex={{ laptop: 0.3, mobile: 1 }} gap={2} sx={{ width: { laptop: 400, mobile: '100%' }, height: '100%', overflowY: 'auto', backgroundColor: 'grey.100' }}>
         <Fade in={true} timeout={1000}>
