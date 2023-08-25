@@ -4,6 +4,7 @@ import { useReducer } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { Stack, Typography } from '@/src/ui/mui'
+import styled from '@emotion/styled'
 import BedIcon from '@mui/icons-material/Bed'
 import BusinessIcon from '@mui/icons-material/Business'
 import HomeIcon from '@mui/icons-material/Home'
@@ -66,14 +67,14 @@ export default function Home() {
   }
   return (
     <Stack alignItems='center' role='navigation' aria-label='주거 유형 선택' sx={{ mt: { laptop: 10, tablet: 5, mobile: 2 }}}>
-      <div>
-        원하는 장소에서
+      <MainPhraseContainer>
+        원하는 장소에서&nbsp;
         <select onChange={handleSelect}>
           <option value='0.7'>걸어서 10분 이내</option>
           <option value='1.5'>걸어서 20분 이내</option>
         </select>
-        매물을 찾아보세요!
-      </div>
+        &nbsp;매물을 찾아보세요!
+      </MainPhraseContainer>
       <Stack direction='row' justifyContent='center' alignItems='center' spacing={2} pl={2} pr={2} sx={{ width: { mobile: '100%' }}}>
         <Stack
           component='button'
@@ -115,3 +116,9 @@ export default function Home() {
     </Stack>
   )
 }
+
+const MainPhraseContainer = styled.div`
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 500;
+`

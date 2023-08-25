@@ -18,7 +18,7 @@ type Props = {
 const NaverlandList = ({ item, totalCount, handlePagination }: Props) => {
   return (
     <Stack tabIndex={0} aria-label='매물 목록' sx={{ width: '100%', mb: 22 }}>
-      <Stack tabIndex={0} mt={2}>
+      <Stack tabIndex={0}>
         <Typography aria-label={`총 ${totalCount}`} variant='body1' sx={{ fontWeight: 500, ml: 1, mb: 1, color: 'grey.600' }}>총 {totalCount}개</Typography>
       </Stack>
       <StyledDataGrid<ArticleItem>
