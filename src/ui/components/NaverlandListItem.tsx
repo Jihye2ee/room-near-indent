@@ -1,7 +1,8 @@
 'use client'
 import { useMemo } from 'react'
 
-import { Article, ArticleItem } from '@/src/data/types'
+import { ArticleItem } from '@/src/data/types'
+import useDeviceType from '@/src/hooks/DeviceType'
 import { Box, Stack, Typography } from '@/src/ui/mui'
 
 type Props = {
@@ -10,8 +11,8 @@ type Props = {
 
 const ALT_IMAGE = '/alt_image.svg'
 const NaverlandListItem = ({ item }: Props) => {
+  const { isMobile } = useDeviceType()
   const imageURL = useMemo(() => item.repImgUrl && `https://landthumb-phinf.pstatic.net/${item.repImgUrl}?type=m400_350`, [item.repImgUrl])
-
   const handleImageError = ((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = ALT_IMAGE
     e.currentTarget.onerror = null
@@ -22,7 +23,11 @@ const NaverlandListItem = ({ item }: Props) => {
     <Stack tabIndex={0} direction='row' justifyContent='center'>
       <Stack>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={imageURL ?? ALT_IMAGE} alt='' width={120} height={120} style={{ objectFit: 'cover' }} onError={handleImageError}/>
+        {isMobile ? (
+          <img src={imageURL ?? ALT_IMAGE} alt='' height={200} style={{ objectFit: 'cover', aspectRatio: 1, borderRadius: '12px' }}  onError={handleImageError} />
+        ) : (
+          <img src={imageURL ?? ALT_IMAGE} alt='' height={160} style={{ objectFit: 'cover', aspectRatio: 1, borderRadius: '12px' }}  onError={handleImageError} />
+        )}
       </Stack>
       <Stack ml={2}>
         <Typography variant='body2' component='p' sx={{overflow: 'hidden', textOverflow: 'ellipsis', hiteSpace: 'nowrap'}}>

@@ -1,15 +1,11 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useCallback } from 'react'
-import { useRecoilState } from 'recoil'
 
-import { filterState } from '@/app/recoil-state'
-import { getNaverlandData } from '@/src/data/naverland/queries'
 import { ArticleData, ArticleItem } from '@/src/data/types'
 import StyledDataGrid from '@/src/ui/atoms/DataGrid'
 import { Stack, Typography } from '@/src/ui/mui'
+import { GridOverlay } from '@mui/x-data-grid'
 
 import NaverlandListItem from './NaverlandListItem'
 
@@ -36,7 +32,7 @@ const NaverlandList = ({ item, totalCount, handlePagination }: Props) => {
             field: 'item_id',
             headerName: '매물 정보',
             headerAlign: 'center',
-            flex: 0.85,
+            flex: 1,
             sortable: false,
             renderCell: ({ row }) => {
               return <NaverlandListItem item={row} />
@@ -44,8 +40,8 @@ const NaverlandList = ({ item, totalCount, handlePagination }: Props) => {
           },
           {
             field: '',
-            headerName: '더보기',
-            flex: 0.15,
+            headerName: '+',
+            flex: 0.1,
             align: 'center',
             sortable: false,
             renderCell: ({ row }) =>
@@ -61,6 +57,15 @@ const NaverlandList = ({ item, totalCount, handlePagination }: Props) => {
               pageSize: 20,
             }
           }
+        }}
+        slots={{
+          noRowsOverlay: () => (
+            <GridOverlay>
+              <Typography variant="body2" color="grey.700">
+                검색된 데이터가 없습니다.
+              </Typography>
+            </GridOverlay>
+          ),
         }}
         onPaginationModelChange={(paginationModel: any) => {
           handlePagination(paginationModel.page + 1)

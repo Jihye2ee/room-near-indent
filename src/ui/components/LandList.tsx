@@ -36,7 +36,7 @@ const LandList = ({ items }: Props) => {
           },
           {
             field: '',
-            headerName: '더보기',
+            headerName: '+',
             flex: 0.1,
             align: 'center',
             sortable: false,

@@ -15,7 +15,7 @@ const LandListItem = ({ item }: Props) => {
     <Stack tabIndex={0} direction='row'>
       <Stack>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={imageURL ?? ''} alt='' width={120} height={120} style={{ objectFit: 'cover' }} />
+        <img src={imageURL ?? ''} alt='' height={180} style={{ objectFit: 'cover', aspectRatio: 1.3333, borderRadius: '12px' }} />
       </Stack>
       <Stack ml={2} gap={1}>
         <Typography variant='body2' >{item.address1}</Typography>
