@@ -1,8 +1,8 @@
 import { Bounds } from '../data/address/types'
 
-export const calculateBounds = (centerLatitude: number, centerLongitude: number): Bounds => {
-  const deltaLat = 1.5 / 110.574 // 위도 1도는 약 110.574km
-  const deltaLon = 1.5 / (111.320 * Math.cos((centerLatitude * Math.PI) / 180))
+export const calculateBounds = (distance: number, centerLatitude: number, centerLongitude: number): Bounds => {
+  const deltaLat = distance / 110.574 // 위도 1도는 약 110.574km
+  const deltaLon = distance / (111.320 * Math.cos((centerLatitude * Math.PI) / 180))
 
   return {
     topLat: (centerLatitude + deltaLat).toFixed(7),

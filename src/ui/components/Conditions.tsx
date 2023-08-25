@@ -2,7 +2,7 @@
 import { useRecoilState } from 'recoil'
 
 import { filterState } from '@/app/recoil-state'
-import { KaKaoAddressItem } from '@/src/data/address/types'
+import { KakaoItem } from '@/src/data/local/types'
 import { ToggleButton } from '@/src/ui/atoms'
 import DepositPriceSlider from '@/src/ui/components/DepositPriceSlider'
 import RentPriceSlider from '@/src/ui/components/RentPriceSlider'
@@ -11,7 +11,8 @@ import { Stack, ToggleButtonGroup, Typography } from '@/src/ui/mui'
 export type State = {
   site: 'naver' | 'zigbang'
   search?: string
-  area: KaKaoAddressItem
+  area: KakaoItem
+  distance?: number
   type: string
   deposit: number[]
   rent: number[]
@@ -24,12 +25,13 @@ const Conditions = () => {
 
   return (
     <Stack my={2} mx={2}>
-      <Typography variant='body2' mt={2}>사이트 선택</Typography>
+      <Typography variant='body2' mt={1}>사이트 선택</Typography>
       <ToggleButtonGroup
         value={state.site}
         exclusive
         sx={{
-          m: 1,
+          mt: 1,
+          mb: 1,
           width: '100%',
         }}
         onChange={(_, value: 'naver' | 'zigbang') => setState({ ...state, site: value })}
@@ -42,12 +44,13 @@ const Conditions = () => {
           <Typography variant='body2'>네이버<br/>부동산</Typography>
         </ToggleButton>
       </ToggleButtonGroup>
-      <Typography variant='body2' mt={2}>거래 유형</Typography>
+      <Typography variant='body2' mt={1}>거래 유형</Typography>
       <ToggleButtonGroup
         value={state.type}
         exclusive
         sx={{
-          m: 1,
+          mt: 1,
+          mb: 1,
           width: '100%',
         }}
         onChange={(_, value: string) => setState({ ...state, type: value })}
@@ -60,7 +63,7 @@ const Conditions = () => {
           <Typography variant='body2'>월세</Typography>
         </ToggleButton>
       </ToggleButtonGroup>
-      <Stack mt={1}>
+      <Stack mt={1} mb={1}>
         <DepositPriceSlider value={state.deposit} onChange={(value) => setState({ ...state, deposit: value })} />
       </Stack>
       {state.type === 'rent' && (
