@@ -8,14 +8,15 @@ export const filterState = atom<State>({
   default: {
     site: 'zigbang',
     type: 'deposit',
+    distance: 0.7,
     deposit: [0, 40000],
     rent: [0, 150],
     area: {
       address: null,
       address_name: '',
       address_type: '',
-      x: '126.570667',
-      y: '33.450701',
+      x: '33.450701',
+      y: '126.570667',
       road_address: null,
       bounds: {
         bottomLat: '37.5298390',

@@ -1,12 +1,14 @@
 'use client'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useReducer } from 'react'
+import { useRecoilState } from 'recoil'
 
 import { Stack, Typography } from '@/src/ui/mui'
 import BedIcon from '@mui/icons-material/Bed'
 import BusinessIcon from '@mui/icons-material/Business'
 import HomeIcon from '@mui/icons-material/Home'
+
+import { filterState } from './recoil-state'
 
 type State = {
   isCompanyEmojiShow: boolean
@@ -57,21 +59,21 @@ const reducer = (state: State, action: Action) => {
 
 export default function Home() {
   const router = useRouter()
+  const [conditions, setConditions] = useRecoilState(filterState)
   const [state, dispatch] = useReducer(reducer, { isCompanyEmojiShow: true, isSubwayEmojiShow: true, isSchoolEmojiShow: true, isZigbangEmojiShow: true, isNaverlandEmojiShow: true })
+  const handleSelect = (e: any) => {
+    setConditions({ ...conditions, distance: e.target.value })
+  }
   return (
     <Stack alignItems='center' role='navigation' aria-label='주거 유형 선택' sx={{ mt: { laptop: 10, tablet: 5, mobile: 2 }}}>
-      <Typography component='h3' sx={{ fontSize: '20px', fontWeight: 500, lineHeight: 1.5, m: 2, textAlign: 'center' }} tabIndex={0}>
-        <span onClick={() => dispatch({ type: 'TOGGLE_ZIGBANG', payload: !state.isZigbangEmojiShow })}>
-          <Image aria-hidden='true' src='/zigbang-logo.png' alt='' width={20} height={20} style={{ cursor: 'pointer', marginRight: 2, display: state.isZigbangEmojiShow ? 'inline' : 'none' }} />
-          <span style={{ cursor: 'pointer', display: state.isZigbangEmojiShow ? 'none' : 'inline' }}>&nbsp;직방</span>
-        </span>
-        <span>과&nbsp;</span>
-        <span onClick={() => dispatch({ type: 'TOGGLE_NAVER_LAND', payload: !state.isNaverlandEmojiShow })}>
-          <Image aria-hidden='true' src='/naverland-logo.png' alt='' width={20} height={20} style={{ cursor: 'pointer', display: state.isNaverlandEmojiShow ? 'inline' : 'none' }} />
-          <span style={{ cursor: 'pointer', display: state.isNaverlandEmojiShow ? 'none' : 'inline' }}>&nbsp;네이버부동산&nbsp;</span>
-        </span>
-        을 돌아다니지 않고, <br/>원하는 집을 탐색해보세요!
-      </Typography>
+      <div>
+        원하는 장소에서
+        <select onChange={handleSelect}>
+          <option value='0.7'>걸어서 10분 이내</option>
+          <option value='1.5'>걸어서 20분 이내</option>
+        </select>
+        매물을 찾아보세요!
+      </div>
       <Stack direction='row' justifyContent='center' alignItems='center' spacing={2} pl={2} pr={2} sx={{ width: { mobile: '100%' }}}>
         <Stack
           component='button'
