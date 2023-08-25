@@ -19,7 +19,7 @@ export const getNaverLandDataTotalCount = async (path: string, state: State, cor
     rgt: state.area.bounds.rightLon,
     wprcMin: state.deposit[0],
     wprcMax: state.deposit[1],
-    cortarNo: cortarNo || state.area.address?.b_code,
+    cortarNo: cortarNo,
   })
   const naverURL = `https://m.land.naver.com/cluster/clusterList?${queryParams}`
   const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
@@ -45,7 +45,7 @@ export const getNaverlandData = async (path: string, state: State, totalCount: n
     rgt: state.area.bounds.rightLon,
     wprcMin: state.deposit[0],
     wprcMax: state.deposit[1],
-    cortarNo: cortarNo || state.area.address?.b_code,
+    cortarNo: cortarNo,
     totCnt: totalCount,
     page: page ? page : 1
   })
