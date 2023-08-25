@@ -9,7 +9,7 @@ const ThemeToggle = () => {
     <Stack
       tabIndex={0}
       aria-label='다크모드 선택'
-      sx={{ width: 'fit-content', background: 'none', border: 'none' }}
+      sx={{ width: 'fit-content', background: 'none', border: 'none', cursor: 'pointer' }}
       component='switch'
       role='switch'
       aria-checked={isDarkMode}
