@@ -33,7 +33,7 @@ const FilterBox = ({ isOpen, open }: Props) => {
       <Stack>
         <AddressSearchInput onChange={(value: KakaoItem) => setState({ ...conditions, area: value })}/>
       </Stack>
-      <Stack position='relative' direction='row' ml={2} mb={1} spacing={1}>
+      <Stack position='relative' direction='row' ml={1} mb={1} spacing={1}>
         <Typography
           component='button'
           variant='body2'

@@ -22,7 +22,6 @@ const AddressSearchInput = ({ onChange }: Props) => {
   const [options, setOptions] = useState<KakaoItem[]>([])
   const handleOnChange = ((value: KakaoItem | null) => {
     if (!value) return
-    console.log('[conditions.distance]', conditions.distance)
     const bounds = calculateBounds(conditions.distance ?? 2, Number(value.y), Number(value.x))
     const newValue = { ...value, bounds } as KakaoItem
     onChange(newValue)
@@ -37,7 +36,6 @@ const AddressSearchInput = ({ onChange }: Props) => {
     getKakaoAddressSearch(newInputValue).then(async ({ documents }: { documents: KakaoItem[] }) => {
       if (documents.length === 0) {
         getKakaoKeywordSearch({ query: newInputValue }).then(({ documents }: { documents: KakaoItem[] }) => {
-          console.log('[documents]', documents)
           setOptions(documents)
         })
       } else {
@@ -91,10 +89,10 @@ const AddressSearchInput = ({ onChange }: Props) => {
 export default AddressSearchInput
 
 const autoCompleteSx: SxProps = {
-  width: '370px',
-  ml: 2,
-  mt: 2,
-  mb: 2,
+  width: 'calc(100% - 16px)',
+  ml: 1,
+  mt: 1,
+  mb: 1,
   borderRadius: '6px',
   background: 'white',
   '.MuiOutlinedInput-root .MuiAutocomplete-input': { p: 0 },
