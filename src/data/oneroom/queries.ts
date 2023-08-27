@@ -22,7 +22,8 @@ export const getOneroomIDs = async (params: State) => {
     domain: 'zigbang',
     geohash: geohashValue,
     needHasNoFiltered: true,
-    service_type_eq: '원룸'
+    service_type_eq: '원룸',
+    service_type: '원룸',
   })
 
   const response = await fetch(`${url}?${queryParams}`, {

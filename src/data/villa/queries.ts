@@ -11,8 +11,7 @@ type Section = {
 
 export const getVillaItemIDs = async (params: State) => {
   const url = 'https://apis.zigbang.com/v2/items'
-  const precision = params.distance === 0.7 ? 6 : 5
-  const geohashValue = geohash.encode(params.area.y, params.area.x, precision)
+  const geohashValue = geohash.encode(params.area.y, params.area.x, 5)
   const queryParams = queryString.stringify({
     deposit_gteq: params.deposit[0],
     deposit_lteq: params.deposit[1],
