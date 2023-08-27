@@ -1,5 +1,6 @@
 'use client'
 import { ArticleData } from '@/src/data/types'
+import { LoaderIcon } from '@/src/style/icons'
 import { Pagination } from '@/src/ui/mui'
 import styled from '@emotion/styled'
 
@@ -9,16 +10,20 @@ type Props = {
   item?: ArticleData
   totalCount: number
   handlePagination: (page: number) => void
+  loading: boolean
 }
 
-const NaverlandList = ({ item, totalCount, handlePagination }: Props) => {
+const NaverlandList = ({ item, totalCount, handlePagination, loading }: Props) => {
   const itemsPerPage = 20
   const totalPages = Math.ceil(totalCount / itemsPerPage)
 
   return (
     <Container tabIndex={0} aria-label='매물 목록'>
       <TotalCountText aria-label={`총 ${totalCount}`}>총 {totalCount}개</TotalCountText>
-      {totalCount === 0 ? (
+       {loading ? (
+        <LoadingContainer><LoaderIcon width={40} height={40} /></LoadingContainer>
+      ) : (<>
+        {totalCount === 0 ? (
         <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>
       ) : (<>
         {item?.body.map((item, index) => (
@@ -32,7 +37,8 @@ const NaverlandList = ({ item, totalCount, handlePagination }: Props) => {
           sx={{ alignSelf: 'center', '.MuiPaginationItem-text': { color: 'grey.600' }, cursor: 'pointer', py: 2 }}
         />
       </>)}
-    </Container>
+    </>)}
+  </Container>
   )
 }
 
@@ -43,6 +49,10 @@ const Container = styled.div`
   flex-direction: column;
   gap: 8px;
   width: 100%;
+`
+
+const LoadingContainer = styled.div`
+
 `
 
 const TotalCountText = styled.p`

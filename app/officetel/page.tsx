@@ -29,7 +29,7 @@ const Officetel = () => {
   const [totalCount, setTotalCount] = useState<number>(0)
   const [cortarNo, setCortarNo] = useState<string>('')
   const [filterOpen, setFilterOpen] = useState(false)
-
+  const [loading, setLoading] = useState<boolean>(false)
   const applySearch = useCallback(async (state: State) => {
     if (state.site === 'zigbang') {
       const itemIDs = await getOfficetelItemIDs(state)
@@ -38,6 +38,7 @@ const Officetel = () => {
         Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
         && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
       setLandList(newList)
+      setLoading(false)
     } else if (state.site === 'naver') {
       const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
       const cortarNo = cortarsInfo.documents.filter(document => document.region_type === 'B')?.[0].code
@@ -47,6 +48,7 @@ const Officetel = () => {
       setNaverlandList(naverlist)
       setTotalCount(totalCount)
       setCortarNo(cortarNo)
+      setLoading(false)
     }
   }, [path])
 
@@ -58,6 +60,7 @@ const Officetel = () => {
   useEffect(() => {
     if (isEmpty(conditions.area.x) || isEmpty(conditions.area.y)) return
     if (isEmpty(conditions.area.bounds.bottomLat)) return
+    setLoading(true)
     applySearch(conditions)
   }, [applySearch, conditions])
 
@@ -71,9 +74,9 @@ const Officetel = () => {
       <FilterBox isOpen={filterOpen} open={setFilterOpen} />
       <LandListContainer aria-hidden={filterOpen}>
         {conditions.site === 'zigbang' ? (
-          <LandList items={landList} />
+          <LandList items={landList} loading={loading} />
         ) : (
-          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} />
+          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
         )}
       </LandListContainer>
     </Container>

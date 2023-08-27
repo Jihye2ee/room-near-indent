@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 import { PropertyInfo } from '@/src/data/types'
+import { LoaderIcon } from '@/src/style/icons'
 import styled from '@emotion/styled'
 import { Pagination } from '@mui/material'
 
@@ -9,9 +10,10 @@ import LandListItem from './LandListItem'
 
 type Props = {
   items: PropertyInfo[]
+  loading: boolean
 }
 
-const LandList = ({ items }: Props) => {
+const LandList = ({ items, loading }: Props) => {
   const itemsPerPage = 10
   const [currentPage, setCurrentPage] = useState<number>(1)
   const totalItems = useMemo(() => items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [currentPage, items])
@@ -24,6 +26,9 @@ const LandList = ({ items }: Props) => {
   return (
     <Container tabIndex={0} aria-label='매물 목록'>
       <TotalCountText aria-label={`총 ${items.length}`}>총 {items.length}개</TotalCountText>
+      {loading ? (
+        <LoadingContainer><LoaderIcon width={40} height={40} /></LoadingContainer>
+      ) : (<>
       {items.length === 0 ? (
         <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>
       ) : (<>
@@ -38,6 +43,7 @@ const LandList = ({ items }: Props) => {
           sx={{ alignSelf: 'center', '.MuiPaginationItem-text': { color: 'grey.600' }, cursor: 'pointer', py: 2 }}
         />
       </>)}
+     </>)}
     </Container>
   )
 }
@@ -49,6 +55,13 @@ const Container = styled.div`
   flex-direction: column;
   gap: 8px;
   width: 100%;
+`
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 `
 
 const TotalCountText = styled.p`

@@ -29,7 +29,7 @@ const Oneroom = () => {
   const [totalCount, setTotalCount] = useState<number>(0)
   const [cortarNo, setCortarNo] = useState<string>('')
   const [filterOpen, setFilterOpen] = useState(false)
-
+  const [loading, setLoading] = useState(false)
   const applySearch = useCallback(async (state: State) => {
     if (state.site === 'naver') {
       const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
@@ -40,6 +40,7 @@ const Oneroom = () => {
       setNaverlandList(naverlist)
       setCortarNo(cortarNo)
       setTotalCount(totalCount)
+      setLoading(false)
     } else if (state.site === 'zigbang') {
       const itemIDs = await getOneroomIDs(state)
       const list: PropertyInfo[] = await getLandList(itemIDs)
@@ -47,6 +48,7 @@ const Oneroom = () => {
         Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
         && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
       setLandList(newList)
+      setLoading(false)
     }
   }, [path])
 
@@ -58,6 +60,7 @@ const Oneroom = () => {
   useEffect(() => {
     if (isEmpty(conditions.area.x) || isEmpty(conditions.area.y)) return
     if (isEmpty(conditions.area.bounds.bottomLat)) return
+    setLoading(true)
     applySearch(conditions)
   }, [applySearch, conditions])
 
@@ -71,9 +74,9 @@ const Oneroom = () => {
       <FilterBox isOpen={filterOpen} open={setFilterOpen} />
       <LandListContainer aria-hidden={filterOpen}>
         {conditions.site === 'zigbang' ? (
-          <LandList items={landList} />
+          <LandList items={landList} loading={loading} />
         ) : (
-          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} />
+          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
         )}
       </LandListContainer>
     </Container>
