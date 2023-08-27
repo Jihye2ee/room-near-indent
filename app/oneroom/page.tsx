@@ -57,6 +57,7 @@ const Oneroom = () => {
 
   useEffect(() => {
     if (isEmpty(conditions.area.x) || isEmpty(conditions.area.y)) return
+    if (isEmpty(conditions.area.bounds.bottomLat)) return
     applySearch(conditions)
   }, [applySearch, conditions])
 
