@@ -50,25 +50,7 @@ export const baseTheme = createTheme({
           color: 'inherit',
           textDecoration: 'none'
         },
-        // button: {
-        //   color: 'var(--text-color)',
-        // }
       }
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          // color: 'var(--text-color)',
-          // '&.Mui-disabled': {
-          //   color: 'var(--text-color)',
-          //   background: 'var(--background)',
-          // },
-          // boxShadow: 'none',
-          // ':hover': {
-          //   boxShadow: 'none',
-          // },
-        },
-      },
     },
     MuiContainer: {
       styleOverrides: {
@@ -104,10 +86,30 @@ export const globalStyles = css`
   :root {
     --background: white;
     --text-color: black;
+    --grey-50: #F8F9FA;
+    --grey-100: #F1F3F5;
+    --grey-200: #DFE4EA;
+    --grey-300: #C9CFD6;
+    --grey-400: #AAB2B9;
+    --grey-500: #7B848D;
+    --grey-600: #4D5359;
+    --grey-700: #3A4046;
+    --grey-800: #2C3136;
+    --grey-900: #1F2124;
   }
 
   .dark {
     --background: black;
     --text-color: white;
+    --grey-50: #1F2124;
+    --grey-100: #2C3136;
+    --grey-200: #DFE4EA;
+    --grey-300: #3A4046;
+    --grey-400: #4D5359;
+    --grey-500: #7B848D;
+    --grey-600: #C9CFD6;
+    --grey-700: #DFE4EA;
+    --grey-800: #F1F3F5;
+    --grey-900: #F8F9FA;
   }
 `

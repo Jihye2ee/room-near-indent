@@ -1,10 +1,9 @@
 'use client'
-import Image from 'next/image'
-import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
 
 import { PropertyInfo } from '@/src/data/types'
-import StyledDataGrid from '@/src/ui/atoms/DataGrid'
-import { Stack, Typography } from '@/src/ui/mui'
+import styled from '@emotion/styled'
+import { Pagination } from '@mui/material'
 
 import LandListItem from './LandListItem'
 
@@ -13,51 +12,56 @@ type Props = {
 }
 
 const LandList = ({ items }: Props) => {
+  const itemsPerPage = 10
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const totalItems = useMemo(() => items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [currentPage, items])
+  const totalPages = Math.ceil(items.length / itemsPerPage)
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [items])
+
   return (
-    <Stack tabIndex={0} aria-label='매물 목록' sx={{ width: '100%' }}>
-      <Stack tabIndex={0}>
-        <Typography aria-label={`총 ${items.length}`} variant='body1' sx={{ fontWeight: 500, ml: 1, mb: 1, color: 'grey.600' }}>총 {items.length}개</Typography>
-      </Stack>
-      <StyledDataGrid<PropertyInfo>
-        getRowHeight={() => 'auto'}
-        autoHeight
-        rows={items}
-        getRowId={(row) => row.item_id}
-        columns={[
-          {
-            field: 'item_id',
-            headerName: '매물 정보',
-            headerAlign: 'center',
-            flex: 0.9,
-            sortable: false,
-            renderCell: ({ row }) => {
-              return <LandListItem item={row} />
-            }
-          },
-          {
-            field: '',
-            headerName: '+',
-            flex: 0.1,
-            align: 'center',
-            sortable: false,
-            renderCell: ({ row }) =>
-              <Link aria-label='더보기' href={`https://www.zigbang.com/home/villa/items/${row.item_id}`} target='_blank'>
-                <Image src='/zigbang-logo.png' alt='직방 더보기' width={20} height={20} />
-              </Link>
-          },
-        ]}
-        disableColumnMenu
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 10,
-            }
-          }
-        }}
-      />
-    </Stack>
+    <Container tabIndex={0} aria-label='매물 목록'>
+      <TotalCountText aria-label={`총 ${items.length}`}>총 {items.length}개</TotalCountText>
+      {items.length === 0 ? (
+        <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>
+      ) : (<>
+        {totalItems.map((item) => (
+          <LandListItem key={item.item_id} item={item} />
+        ))}
+        <Pagination
+          defaultPage={1}
+          count={totalPages}
+          page={currentPage}
+          onChange={(_, page) => setCurrentPage(page)}
+          sx={{ alignSelf: 'center', '.MuiPaginationItem-text': { color: 'grey.600' }, cursor: 'pointer', py: 2 }}
+        />
+      </>)}
+    </Container>
   )
 }
 
 export default LandList
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+`
+
+const TotalCountText = styled.p`
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--grey-700);
+  padding: 16px 16px 0px 16px;
+`
+
+const EmptyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+`
