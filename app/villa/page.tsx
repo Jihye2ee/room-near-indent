@@ -1,6 +1,5 @@
 'use client'
 import { isEmpty } from 'lodash-es'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
@@ -9,23 +8,21 @@ import { getCortarsInfo } from '@/src/data/local/queries'
 import { CortarInfo } from '@/src/data/local/types'
 import { getNaverlandData, getNaverLandDataTotalCount } from '@/src/data/naverland/queries'
 import { getLandList } from '@/src/data/queries'
-import { ArticleData, ClusterData, NaverlandItem, PropertyInfo } from '@/src/data/types'
+import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
 import { getVillaItemIDs } from '@/src/data/villa/queries'
 import useDeviceType from '@/src/hooks/DeviceType'
-import Conditions, { State } from '@/src/ui/components/Conditions'
+import { State } from '@/src/ui/components/Conditions'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
 import MapComponent from '@/src/ui/components/MapComponent'
 import NaverlandList from '@/src/ui/components/NaverlandList'
-import { Box, Fade, Stack, Typography } from '@/src/ui/mui'
-import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined'
-import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined'
-import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined'
+import styled from '@emotion/styled'
 
 import { filterState } from '../recoil-state'
 
 const Villa = () => {
   const path = usePathname()
+  const { isMobile } = useDeviceType()
   const conditions = useRecoilValue(filterState)
   const [landList, setLandList] = useState<PropertyInfo[]>([])
   const [naverlandList, setNaverlandList] = useState<ArticleData>()
@@ -64,22 +61,48 @@ const Villa = () => {
   }, [applySearch, conditions])
 
   return (
-    <Stack sx={{ flexDirection: { laptop: 'row', mobile: 'column' }, height: 'calc(100% - 64px)', overflowX: 'hidden', overflowY: filterOpen ? 'hidden' : 'auto', backgroundColor: 'grey.100' }}>
-      <MapComponent />
+    <Container>
+      {!isMobile && (
+        <MapContainer>
+          <MapComponent />
+        </MapContainer>
+      )}
       <FilterBox isOpen={filterOpen} open={setFilterOpen} />
-      <Stack flex={{ laptop: 0.3, mobile: 1 }} gap={2} sx={{ width: { laptop: 400, mobile: '100%' }, height: '100%', overflowY: 'auto', backgroundColor: 'grey.100' }}>
-        <Fade in={true} timeout={1000}>
-          <Stack mx={1}>
-            {conditions.site === 'zigbang' ? (
-              <LandList items={landList} />
-            ) : (
-              <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination}/>
-            )}
-          </Stack>
-        </Fade>
-      </Stack>
-    </Stack>
+      <LandListContainer aria-hidden={filterOpen}>
+        {conditions.site === 'zigbang' ? (
+          <LandList items={landList} />
+        ) : (
+          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} />
+        )}
+      </LandListContainer>
+    </Container>
   )
 }
 
 export default Villa
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - 64px);
+  overflow: hidden;
+  @media (max-width: 767px) {
+    flex-direction: column;
+  }
+`
+
+const MapContainer = styled.div`
+  display: flex;
+  flex: 0.7;
+`
+
+const LandListContainer = styled.div`
+  display: flex;
+  flex: 0.3;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--grey-100);
+  @media (max-width: 767px) {
+    flex: 1;
+  }
+`

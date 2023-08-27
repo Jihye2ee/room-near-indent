@@ -10,17 +10,19 @@ import { getNaverlandData, getNaverLandDataTotalCount } from '@/src/data/naverla
 import { getOneroomIDs } from '@/src/data/oneroom/queries'
 import { getLandList } from '@/src/data/queries'
 import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
+import useDeviceType from '@/src/hooks/DeviceType'
 import { State } from '@/src/ui/components/Conditions'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
 import MapComponent from '@/src/ui/components/MapComponent'
 import NaverlandList from '@/src/ui/components/NaverlandList'
-import { Fade, Stack } from '@/src/ui/mui'
+import styled from '@emotion/styled'
 
 import { filterState } from '../recoil-state'
 
 const Oneroom = () => {
   const path = usePathname()
+  const { isMobile } = useDeviceType()
   const conditions = useRecoilValue(filterState)
   const [landList, setLandList] = useState<PropertyInfo[]>([])
   const [naverlandList, setNaverlandList] = useState<ArticleData>()
@@ -59,22 +61,48 @@ const Oneroom = () => {
   }, [applySearch, conditions])
 
   return (
-    <Stack sx={{ flexDirection: { laptop: 'row', mobile: 'column' }, height: 'calc(100% - 64px)', overflowX: 'hidden', overflowY: filterOpen ? 'hidden' : 'auto', backgroundColor: 'grey.100' }}>
-    <MapComponent />
-    <FilterBox isOpen={filterOpen} open={setFilterOpen} />
-    <Stack flex={{ laptop: 0.3, mobile: 1 }} gap={2} sx={{ width: { laptop: 400, mobile: '100%' }, height: '100%', overflowY: 'auto', backgroundColor: 'grey.100' }}>
-      <Fade in={true} timeout={1000}>
-        <Stack mx={1}>
-          {conditions.site === 'zigbang' ? (
-            <LandList items={landList} />
-          ) : (
-            <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} />
-          )}
-        </Stack>
-      </Fade>
-    </Stack>
-  </Stack>
+    <Container>
+      {!isMobile && (
+        <MapContainer>
+          <MapComponent />
+        </MapContainer>
+      )}
+      <FilterBox isOpen={filterOpen} open={setFilterOpen} />
+      <LandListContainer aria-hidden={filterOpen}>
+        {conditions.site === 'zigbang' ? (
+          <LandList items={landList} />
+        ) : (
+          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} />
+        )}
+      </LandListContainer>
+    </Container>
   )
 }
 
 export default Oneroom
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: calc(100% - 64px);
+  overflow: hidden;
+  @media (max-width: 767px) {
+    flex-direction: column;
+  }
+`
+
+const MapContainer = styled.div`
+  display: flex;
+  flex: 0.7;
+`
+
+const LandListContainer = styled.div`
+  display: flex;
+  flex: 0.3;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: var(--grey-100);
+  @media (max-width: 767px) {
+    flex: 1;
+  }
+`
