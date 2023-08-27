@@ -70,12 +70,12 @@ const ItemImage = styled.img`
 
 const TypeText = styled.div`
   width: fit-content;
-  padding: 4px 6px;
+  padding: 2px 4px;
   color: white;
   background-color: #356EFB;
   font-size: 10px;
   font-weight: 400;
-  border-radius: 40px;
+  border-radius: 4px;
 `
 
 const InfoContainer = styled.div`
