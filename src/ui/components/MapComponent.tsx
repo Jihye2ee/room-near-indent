@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { filterState } from '@/app/recoil-state'
-import { Stack } from '@/src/ui/mui'
+import styled from '@emotion/styled'
 
 const kakaoMapSource = '//dapi.kakao.com/v2/maps/sdk.js?appkey=73ff0f3832dc2af330ffea582903b997&libraries=services&autoload=false'
 const MapComponent = () => {
@@ -13,8 +13,25 @@ const MapComponent = () => {
   const [markers, setMarkers] = useState<any[]>([])
 
   useEffect(() => {
-    const existingScript = document.querySelector(`script[src='${kakaoMapSource}']`);
-    if (existingScript) return
+    const existingScript = document.querySelector(`script[src='${kakaoMapSource}']`)
+    if (existingScript && window && window.kakao) {
+      window.kakao.maps.load(() => {
+        const container = document.getElementById('map')
+        const options = {
+          center: new window.kakao.maps.LatLng(conditions.area.y, conditions.area.x),
+          level: 3,
+        }
+        const marker = new window.kakao.maps.Marker({
+          position: options.center,
+        })
+        setMarkers([marker])
+        const newMap = new window.kakao.maps.Map(container, options)
+        marker.setMap(newMap)
+        newMap.panTo(options.center)
+        setMap(newMap)
+      })
+      return
+    }
 
     const kakaoMapScript = document.createElement('script')
     kakaoMapScript.src = kakaoMapSource
@@ -24,17 +41,11 @@ const MapComponent = () => {
       window.kakao.maps.load(() => {
         const container = document.getElementById('map')
         const options = {
-          center: new window.kakao.maps.LatLng(conditions.area.x, conditions.area.y),
+          center: new window.kakao.maps.LatLng(37.5445888153751, 127.056066999327),
           level: 3,
         }
 
         const map = new window.kakao.maps.Map(container, options)
-        const markerPosition = new window.kakao.maps.LatLng(options.center)
-
-        const marker = new window.kakao.maps.Marker({
-          position: markerPosition,
-        })
-        marker.setMap(map)
         map.panTo(options.center)
         setMap(map)
       })
@@ -43,11 +54,12 @@ const MapComponent = () => {
     kakaoMapScript.addEventListener('load', onLoadKakaoAPI)
 
     return () => kakaoMapScript.removeEventListener('load', onLoadKakaoAPI)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (!window || !window.kakao) return
-    const container = document.getElementById('map')
+    if (!map) return
     const options = {
       center: new window.kakao.maps.LatLng(conditions.area.y, conditions.area.x),
       level: 3,
@@ -62,27 +74,24 @@ const MapComponent = () => {
     })
     setMarkers([marker])
 
-    if (!map) {
-      const newMap = new window.kakao.maps.Map(container, options)
-      marker.setMap(map)
-      newMap.panTo(options.center)
-      setMap(newMap)
-    } else {
-      marker.setMap(map)
-      map?.panTo(options.center)
-      setMap(map)
-    }
+    marker.setMap(map)
+    map?.panTo(options.center)
+    setMap(map)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conditions.area])
 
   return (
-    <Stack
-      position='relative'
-      id='map'
-      width='100%'
-      height='100%'
-      display={{ laptop: 'block', tablet: 'none', mobile: 'none' }}
-    />
+    <MapContainer id='map' />
   )
 }
 
 export default MapComponent
+
+const MapContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  @media (max-width: 767px) {
+    display: none;
+  }
+`
