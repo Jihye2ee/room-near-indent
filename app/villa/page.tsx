@@ -10,7 +10,6 @@ import { getNaverlandData, getNaverLandDataTotalCount } from '@/src/data/naverla
 import { getLandList } from '@/src/data/queries'
 import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
 import { getVillaItemIDs } from '@/src/data/villa/queries'
-import useDeviceType from '@/src/hooks/DeviceType'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
 import MapComponent from '@/src/ui/components/MapComponent'
@@ -21,14 +20,13 @@ import { filterState, State } from '../recoil-state'
 
 const Villa = () => {
   const path = usePathname()
-  const { isMobile } = useDeviceType()
   const conditions = useRecoilValue(filterState)
   const [landList, setLandList] = useState<PropertyInfo[]>([])
   const [naverlandList, setNaverlandList] = useState<ArticleData>()
   const [totalCount, setTotalCount] = useState<number>(0)
   const [cortarNo, setCortarNo] = useState<string>('')
-  const [filterOpen, setFilterOpen] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
+
   const applySearch = useCallback(async (state: State) => {
     if (state.site === 'naver') {
       const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
@@ -65,19 +63,21 @@ const Villa = () => {
 
   return (
     <Container>
-      {!isMobile && (
+      <FilterContainer>
+        <FilterBox />
+      </FilterContainer>
+      <Content>
         <MapContainer>
           <MapComponent />
         </MapContainer>
-      )}
-      <FilterBox isOpen={filterOpen} open={setFilterOpen} />
-      <LandListContainer aria-hidden={filterOpen}>
-        {conditions.site === 'zigbang' ? (
-          <LandList items={landList} loading={loading} />
-        ) : (
-          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
-        )}
-      </LandListContainer>
+        <LandListContainer>
+          {conditions.site === 'zigbang' ? (
+            <LandList items={landList} loading={loading} />
+          ) : (
+            <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
+          )}
+        </LandListContainer>
+      </Content>
     </Container>
   )
 }
@@ -86,9 +86,24 @@ export default Villa
 
 const Container = styled.div`
   display: flex;
-  flex-direction: row;
-  height: calc(100% - 64px);
+  flex-direction: column;
+  height: calc(100% - 60px);
   overflow: hidden;
+`
+
+const FilterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: var(--grey-100);
+  @media (max-width: 767px) {
+    position: relative;
+  }
+`
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: 100%;
   @media (max-width: 767px) {
     flex-direction: column;
   }
@@ -97,6 +112,9 @@ const Container = styled.div`
 const MapContainer = styled.div`
   display: flex;
   flex: 0.7;
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const LandListContainer = styled.div`
@@ -105,6 +123,7 @@ const LandListContainer = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--grey-100);
+  border-left: 1px solid var(--grey-200);
   @media (max-width: 767px) {
     flex: 1;
   }

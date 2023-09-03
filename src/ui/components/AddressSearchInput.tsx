@@ -89,12 +89,10 @@ const AddressSearchInput = ({ onChange }: Props) => {
 export default AddressSearchInput
 
 const autoCompleteSx: SxProps = {
-  width: 'calc(100% - 16px)',
-  ml: 1,
+  width: '100%',
   mt: 1,
   mb: 1,
   borderRadius: '6px',
-  background: 'white',
   '.MuiOutlinedInput-root .MuiAutocomplete-input': { p: 0 },
   '.MuiOutlinedInput-root': {
     backgroundColor: 'grey.200',

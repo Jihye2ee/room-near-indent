@@ -27,7 +27,6 @@ const Officetel = () => {
   const [naverlandList, setNaverlandList] = useState<ArticleData>()
   const [totalCount, setTotalCount] = useState<number>(0)
   const [cortarNo, setCortarNo] = useState<string>('')
-  const [filterOpen, setFilterOpen] = useState(false)
   const [loading, setLoading] = useState<boolean>(false)
   const applySearch = useCallback(async (state: State) => {
     if (state.site === 'zigbang') {
@@ -65,19 +64,21 @@ const Officetel = () => {
 
   return (
     <Container>
-      {!isMobile && (
+      <FilterContainer>
+        <FilterBox />
+      </FilterContainer>
+      <Content>
         <MapContainer>
           <MapComponent />
         </MapContainer>
-      )}
-      <FilterBox isOpen={filterOpen} open={setFilterOpen} />
-      <LandListContainer aria-hidden={filterOpen}>
-        {conditions.site === 'zigbang' ? (
-          <LandList items={landList} loading={loading} />
-        ) : (
-          <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
-        )}
-      </LandListContainer>
+        <LandListContainer>
+          {conditions.site === 'zigbang' ? (
+            <LandList items={landList} loading={loading} />
+          ) : (
+            <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
+          )}
+        </LandListContainer>
+      </Content>
     </Container>
   )
 }
@@ -86,9 +87,24 @@ export default Officetel
 
 const Container = styled.div`
   display: flex;
-  flex-direction: row;
-  height: calc(100% - 64px);
+  flex-direction: column;
+  height: calc(100% - 60px);
   overflow: hidden;
+`
+
+const FilterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: var(--grey-100);
+  @media (max-width: 767px) {
+    position: relative;
+  }
+`
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: row;
+  height: 100%;
   @media (max-width: 767px) {
     flex-direction: column;
   }
@@ -97,6 +113,9 @@ const Container = styled.div`
 const MapContainer = styled.div`
   display: flex;
   flex: 0.7;
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const LandListContainer = styled.div`
@@ -105,7 +124,9 @@ const LandListContainer = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   background-color: var(--grey-100);
+  border-left: 1px solid var(--grey-200);
   @media (max-width: 767px) {
     flex: 1;
   }
 `
+
