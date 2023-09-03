@@ -1,7 +1,19 @@
 
 import { atom } from 'recoil'
 
-import { State } from '@/src/ui/components/ConditionsModal'
+import { KakaoItem } from '@/src/data/local/types'
+
+export type State = {
+  site: 'naver' | 'zigbang'
+  search?: string
+  area: KakaoItem
+  distance?: number
+  type: string
+  deposit: number[]
+  rent: number[]
+  totalCount?: number
+  cortarNo: string
+}
 
 export const initialFilterStateDefault: State = {
   site: 'zigbang',
