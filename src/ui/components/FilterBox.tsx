@@ -2,23 +2,23 @@
 import { useMemo } from 'react'
 import { useRecoilState } from 'recoil'
 
-import { filterState } from '@/app/recoil-state'
+import { filterModalState, filterState } from '@/app/recoil-state'
 import { KakaoItem } from '@/src/data/local/types'
-import useDeviceType from '@/src/hooks/DeviceType'
-import { Box, Fade, Stack, Typography } from '@/src/ui/mui'
+import styled from '@emotion/styled'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import TuneIcon from '@mui/icons-material/Tune'
 
 import AddressSearchInput from './AddressSearchInput'
-import Conditions from './Conditions'
+import ConditionsModal from './ConditionsModal'
 import { depositMarks } from './DepositPriceSlider'
 import { rentMarks } from './RentPriceSlider'
+import SiteSelect from './SiteSelect'
+import TypeAndPriceSelect from './TypeAndPriceSelect'
 
-type Props = {
-  isOpen: boolean
-  open: (isOpen: boolean) => void
-}
-const FilterBox = ({ isOpen, open }: Props) => {
-  const { isMobile } = useDeviceType()
+const FilterBox = () => {
   const [conditions, setState] = useRecoilState(filterState)
+  const [modalState, setModalState] = useRecoilState(filterModalState)
 
   const depositMaxText = useMemo(() =>
     conditions.deposit[1] === 40000? '' : depositMarks.find(mark => mark.value === conditions.deposit[1])?.label ?? ''
@@ -29,45 +29,117 @@ const FilterBox = ({ isOpen, open }: Props) => {
   , [conditions.rent])
 
   return (
-    <Stack position={{ laptop: 'absolute', mobile: 'sticky' }} direction='column' sx={{ top: { laptop: 100, mobile: -1 }, left: { laptop: 20, mobile: 0 }, zIndex: 9999, backgroundColor: 'grey.100' }} width={{ laptop: 400, tablet: '100%', mobile: '100%' }}>
-      <Stack>
+    <Container>
+      <SearchContainer>
         <AddressSearchInput onChange={(value: KakaoItem) => setState({ ...conditions, area: value })}/>
-      </Stack>
-      <Stack position='relative' direction='row' ml={1} mb={1} spacing={1}>
-        <Typography
-          component='button'
-          variant='body2'
-          sx={{ p: 1, border: '0.5px solid', borderColor: 'grey.500', borderRadius: 1, backgroundColor: 'grey.100', cursor: 'pointer', ':hover': { opacity: 0.6 } }}
-          onClick={() => open(!isOpen)}
-        >
-          {conditions.site === 'zigbang' ? '직방' : '네이버 부동산'}
-        </Typography>
-        <Typography
-          variant='body2'
-          component='button'
-          sx={{ p: 1, border: '0.5px solid', borderColor: 'grey.500', borderRadius: 1, backgroundColor: 'grey.100', cursor: 'pointer', ':hover': { opacity: 0.6 }  }}
-          onClick={() => open(!isOpen)}
-        >
-          {conditions.type === 'deposit'
-            ? `전세${depositMaxText && `(~${depositMaxText})`}`
-            : `월세${!depositMaxText && !rentMaxText ? ' ･ 금액' : !depositMaxText ? '(' : ''} ${depositMaxText && `(~${depositMaxText}${rentMaxText && '/'}`}${rentMaxText && `~${rentMaxText})`}${!depositMaxText && !rentMaxText ? '' : !rentMaxText ? ')' : ''}`
+        <MobileFilterContainer onClick={() => setModalState({ mobileFilterOpen: !modalState.mobileFilterOpen, siteOpen: false, typeAndPriceOpen: false })}>
+          <TuneIcon width={24} height={24} sx={{ color: 'grey.800', m: 1, cursor: 'pointer', display: { laptop: 'none', mobile: 'block' } }}/>
+        </MobileFilterContainer>
+      </SearchContainer>
+
+      <FilterContainer>
+        <FilterMenu as='button' onClick={() => setModalState({ siteOpen: !modalState.siteOpen, mobileFilterOpen: false, typeAndPriceOpen: false })} selected={modalState.siteOpen}>
+          <FilterText selected={modalState.siteOpen}>{conditions.site === 'zigbang' ? '직방' : '네이버 부동산'}</FilterText>
+          {modalState.siteOpen
+            ? <ExpandLessIcon sx={{ fontSize: 16, color: modalState.siteOpen ? '#90C2FF' : 'grey.800' }} />
+            : <ExpandMoreIcon sx={{ fontSize: 16, color: modalState.siteOpen ? '#90C2FF' : 'grey.800' }} />
           }
-        </Typography>
-      </Stack>
-      <Box role='dialog' aria-hidden={!isOpen} position='relative' onClick={() => open(!isOpen)} sx={{ cursor: 'pointer' }} width={{ laptop: 400, tablet: '100%', mobile: '100%' }}>
-        {isOpen && (<>
-          {isMobile && <Stack position='fixed' sx={{ zIndex: 10, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.7)', overflow: 'hidden' }} />}
-          <Stack position='absolute' sx={{ top: '-1px', left: 0, right: 0, bottom: 0, zIndex: 99, }} width={{ laptop: 400, tablet: '100%', mobile: '100%' }} onClick={(event) => event.stopPropagation()}>
-            <Fade in={true} timeout={1000}>
-              <Stack sx={{ backgroundColor: 'grey.100' }}>
-                <Conditions />
-              </Stack>
-            </Fade>
-          </Stack>
-        </>)}
-      </Box>
-    </Stack>
+        </FilterMenu>
+        <FilterSelect>
+          {modalState.siteOpen && <SiteSelect isOpen={modalState.siteOpen} onClose={() => setModalState({ siteOpen: false, typeAndPriceOpen: false, mobileFilterOpen: false })}/>}
+        </FilterSelect>
+      </FilterContainer>
+      <FilterContainer>
+        <FilterMenu as='button' onClick={() => setModalState({ typeAndPriceOpen: !modalState.typeAndPriceOpen, siteOpen: false, mobileFilterOpen: false })} selected={modalState.typeAndPriceOpen}>
+          <FilterText selected={modalState.typeAndPriceOpen}>
+            {conditions.type === 'deposit'
+              ? `전세${depositMaxText && `(~${depositMaxText})`}`
+              : `월세${!depositMaxText && !rentMaxText ? ' ･ 금액' : !depositMaxText ? '(' : ''} ${depositMaxText && `(~${depositMaxText}${rentMaxText && '/'}`}${rentMaxText && `~${rentMaxText})`}${!depositMaxText && !rentMaxText ? '' : !rentMaxText ? ')' : ''}`
+            }
+          </FilterText>
+          {modalState.typeAndPriceOpen
+            ? <ExpandLessIcon sx={{ fontSize: 16, color: modalState.typeAndPriceOpen ? '#90C2FF' : 'grey.800' }} />
+            : <ExpandMoreIcon sx={{ fontSize: 16, color: modalState.typeAndPriceOpen ? '#90C2FF' : 'grey.800' }} />
+          }
+        </FilterMenu>
+        <FilterSelect>
+          {modalState.typeAndPriceOpen && <TypeAndPriceSelect isOpen={modalState.typeAndPriceOpen} onClose={() => setModalState({ typeAndPriceOpen: false, siteOpen: false, mobileFilterOpen: false })}/>}
+        </FilterSelect>
+      </FilterContainer>
+      <ConditionsModal />
+    </Container>
   )
 }
 
 export default FilterBox
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 16px;
+  height: 60px;
+  gap: 8px;
+  background-color: var(--grey-50);
+  border-bottom: 1px solid var(--grey-200);
+`
+
+const SearchContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+`
+
+const FilterContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  @media (max-width: 767px) {
+    display: none;
+  }
+`
+
+const FilterMenu = styled.div<{ selected?: boolean }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 42px;
+  padding: 8px;
+  border: ${(props) => props.selected ? '2px solid var(--blue-200)' : '1px solid var(--grey-200)'};
+  background-color: var(--grey-50);
+  border-radius: 4px;
+  cursor: pointer;
+`
+
+const FilterText = styled.p<{ selected: boolean }>`
+  font-size: 15px;
+  font-weight: ${(props) => props.selected ? 600 : 500};
+  color: ${(props) => props.selected ? 'var(--blue-300)' : 'var(--grey-800)'};
+  &:hover {
+    opacity: 0.8;
+  }
+`
+
+const FilterSelect = styled.div`
+  position: absolute;
+  top: calc(100% + 13px);
+  left: 0;
+  z-index: 99;
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+`
+
+const MobileFilterContainer = styled.div`
+  display: flex;
+  cursor: pointer;
+  @media (min-width: 768px) {
+    display: none;
+  }
+`
