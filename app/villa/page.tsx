@@ -11,14 +11,13 @@ import { getLandList } from '@/src/data/queries'
 import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
 import { getVillaItemIDs } from '@/src/data/villa/queries'
 import useDeviceType from '@/src/hooks/DeviceType'
-import { State } from '@/src/ui/components/Conditions'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
 import MapComponent from '@/src/ui/components/MapComponent'
 import NaverlandList from '@/src/ui/components/NaverlandList'
 import styled from '@emotion/styled'
 
-import { filterState } from '../recoil-state'
+import { filterState, State } from '../recoil-state'
 
 const Villa = () => {
   const path = usePathname()

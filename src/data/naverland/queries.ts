@@ -1,6 +1,6 @@
 import queryString from 'query-string'
 
-import { State } from '@/src/ui/components/Conditions'
+import { State } from '@/app/recoil-state'
 
 export const getNaverLandDataTotalCount = async (path: string, state: State, cortarNo: string) => {
   const queryParams = queryString.stringify({

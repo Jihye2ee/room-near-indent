@@ -1,7 +1,7 @@
 import geohash from 'ngeohash'
 import queryString from 'query-string'
 
-import { State } from '@/src/ui/components/Conditions'
+import { State } from '@/app/recoil-state'
 
 type Section = {
   type: string
