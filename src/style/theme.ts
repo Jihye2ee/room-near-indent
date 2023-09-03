@@ -96,17 +96,26 @@ export const globalStyles = css`
     --grey-700: #3A4046;
     --grey-800: #2C3136;
     --grey-900: #1F2124;
+
+    --blue-50: #E8F3FF;
+    --blue-100: #C9E2FF;
+    --blue-200: #90C2FF;
+    --blue-300: #4696ff;
+    --blue-500: #356EFB;
+    --blue-600: #2058D9;
+    --blue-800: #1A367B;
   }
 
   .dark {
     --background: black;
     --text-color: white;
+
     --grey-50: #1F2124;
     --grey-100: #2C3136;
-    --grey-200: #DFE4EA;
-    --grey-300: #3A4046;
-    --grey-400: #4D5359;
-    --grey-500: #7B848D;
+    --grey-200: #3A4046;
+    --grey-300: #4D5359;
+    --grey-400: #7B848D;
+    --grey-500: #AAB2B9;
     --grey-600: #C9CFD6;
     --grey-700: #DFE4EA;
     --grey-800: #F1F3F5;
