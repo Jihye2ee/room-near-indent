@@ -1,7 +1,7 @@
 'use client'
 import { useCallback } from 'react'
 
-import { Stack, Typography } from '@mui/material'
+import styled from '@emotion/styled'
 
 import { Slider } from '../atoms'
 
@@ -39,25 +39,25 @@ const DepositPriceSlider = ({ value, onChange }: Props) => {
   }, [])
 
   return (
-    <Stack>
-      <Typography variant='body2' tabIndex={0} aria-label=''>보증금</Typography>
-      <Stack justifyContent='center' alignItems='center'>
-        <Slider
-          sx={{ m: 1 }}
-          min={0}
-          max={40000}
-          marks={depositMarks}
-          step={null}
-          value={value}
-          onChange={(_, newValue) => onChange(newValue as number[])}
-          getAriaValueText={() => valueText(value)}
-          valueLabelDisplay='off'
-        />
-      </Stack>
-    </Stack>
+    <Container>
+      <Slider
+        min={0}
+        max={40000}
+        marks={depositMarks}
+        step={null}
+        value={value}
+        onChange={(_, newValue) => onChange(newValue as number[])}
+        getAriaValueText={() => valueText(value)}
+        valueLabelDisplay='off'
+      />
+    </Container>
   )
 }
 
 export default DepositPriceSlider
 
-
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+`

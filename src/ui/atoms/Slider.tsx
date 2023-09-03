@@ -5,13 +5,13 @@ const BoxShadow =
   '0 3px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)'
 
 const Slider = styled(SliderBase)(({ theme }) => ({
-  width: '300px',
-  color: theme.palette.mode === 'dark' ? '#3880ff' : '#3880ff',
-  height: 2,
+  width: '100%',
+  height: 4,
+  color: '#3880ff',
   padding: '15px 0',
   '& .MuiSlider-thumb': {
-    height: 28,
-    width: 28,
+    height: 24,
+    width: 24,
     backgroundColor: '#fff',
     boxShadow: BoxShadow,
     '&:focus, &:hover, &.Mui-active': {

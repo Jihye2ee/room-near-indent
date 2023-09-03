@@ -1,7 +1,7 @@
 'use client'
-
 import { useCallback } from 'react'
 
+import styled from '@emotion/styled'
 import { Stack, Typography } from '@mui/material'
 
 import { Slider } from '../atoms'
@@ -36,24 +36,25 @@ const RentPriceSlider = ({ value, onChange }: Props) => {
   }, [])
 
   return (
-    <Stack>
-      <Typography variant='body2'>월세</Typography>
-      <Stack justifyContent='center' alignItems='center'>
-        <Slider
-          sx={{ m: 2 }}
-          min={0}
-          max={150}
-          marks={rentMarks}
-          step={null}
-          getAriaLabel={() => '월세 범위'}
-          value={value}
-          onChange={(_, newValue) => onChange(newValue as number[])}
-          getAriaValueText={() => valueText(value)}
-        />
-      </Stack>
-    </Stack>
+    <Container>
+      <Slider
+        min={0}
+        max={150}
+        marks={rentMarks}
+        step={null}
+        getAriaLabel={() => '월세 범위'}
+        value={value}
+        onChange={(_, newValue) => onChange(newValue as number[])}
+        getAriaValueText={() => valueText(value)}
+      />
+    </Container>
   )
 }
 
 export default RentPriceSlider
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+`
