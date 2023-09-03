@@ -1,9 +1,9 @@
 'use client'
 import { useRouter } from 'next/navigation'
-import { useReducer } from 'react'
 import { useRecoilState } from 'recoil'
 
-import { Stack, Typography } from '@/src/ui/mui'
+import { KakaoItem } from '@/src/data/local/types'
+import AddressSearchInput from '@/src/ui/components/AddressSearchInput'
 import styled from '@emotion/styled'
 import BedIcon from '@mui/icons-material/Bed'
 import BusinessIcon from '@mui/icons-material/Business'
@@ -11,114 +11,122 @@ import HomeIcon from '@mui/icons-material/Home'
 
 import { filterState } from './recoil-state'
 
-type State = {
-  isCompanyEmojiShow: boolean
-  isSubwayEmojiShow: boolean
-  isSchoolEmojiShow: boolean
-  isZigbangEmojiShow: boolean
-  isNaverlandEmojiShow: boolean
-}
-
-type Action =
-  | {
-      type: 'TOGGLE_COMPANY'
-      payload: boolean
-    }
-  | {
-      type: 'TOGGLE_SUBWAY'
-      payload: boolean
-    }
-  | {
-      type: 'TOGGLE_SCHOOL'
-      payload: boolean
-    }
-  | {
-    type: 'TOGGLE_ZIGBANG'
-    payload: boolean
-  }
-  | {
-    type: 'TOGGLE_NAVER_LAND'
-    payload: boolean
-  }
-
-const reducer = (state: State, action: Action) => {
-  switch (action.type) {
-    case 'TOGGLE_COMPANY':
-      return { ...state, isCompanyEmojiShow: !state.isCompanyEmojiShow }
-    case 'TOGGLE_SUBWAY':
-      return { ...state, isSubwayEmojiShow: !state.isSubwayEmojiShow}
-    case 'TOGGLE_SCHOOL':
-      return { ...state, isSchoolEmojiShow: !state.isSchoolEmojiShow }
-    case 'TOGGLE_ZIGBANG':
-      return { ...state, isZigbangEmojiShow: !state.isZigbangEmojiShow }
-    case 'TOGGLE_NAVER_LAND':
-      return { ...state, isNaverlandEmojiShow: !state.isNaverlandEmojiShow }
-    default:
-      return state
-  }
-}
-
 export default function Home() {
   const router = useRouter()
   const [conditions, setConditions] = useRecoilState(filterState)
-  const [state, dispatch] = useReducer(reducer, { isCompanyEmojiShow: true, isSubwayEmojiShow: true, isSchoolEmojiShow: true, isZigbangEmojiShow: true, isNaverlandEmojiShow: true })
   const handleSelect = (e: any) => {
     setConditions({ ...conditions, distance: e.target.value })
   }
+
   return (
-    <Stack alignItems='center' role='navigation' aria-label='주거 유형 선택' sx={{ mt: { laptop: 10, tablet: 5, mobile: 2 }}}>
-      <MainPhraseContainer>
-        원하는 장소에서&nbsp;
-        <select onChange={handleSelect}>
-          <option value='0.7'>걸어서 10분 이내</option>
-          <option value='1.5'>걸어서 20분 이내</option>
-        </select>
-        &nbsp;매물을 찾아보세요!
-      </MainPhraseContainer>
-      <Stack direction='row' justifyContent='center' alignItems='center' spacing={2} pl={2} pr={2} sx={{ width: { mobile: '100%' }}}>
-        <Stack
-          component='button'
-          borderRadius={2}
-          justifyContent='center'
-          alignItems='center'
-          height={100}
-          sx={{ backgroundColor: '#356EFB', width: { laptop: '120px', mobile: '100%' }, cursor: 'pointer', border: 'none' }}
+    <Container role='navigation' aria-label='주거 유형 선택'>
+      <PreFilterContainer>
+        <AddressSearchInput onChange={(value: KakaoItem) => setConditions({ ...conditions, area: value })} />
+        <MainPhraseContainer>
+          <DistanceSelect onChange={handleSelect}>
+            <option value='0.7'>걸어서 10분 이내</option>
+            <option value='1.5'>걸어서 20분 이내</option>
+          </DistanceSelect>
+        </MainPhraseContainer>
+      </PreFilterContainer>
+      <TypeSelectContainer>
+        <TypeButtonContainer
+          as='button'
+          style={{ backgroundColor: '#356EFB' }}
           onClick={() => router.push('/officetel')}
         >
           <BusinessIcon aria-hidden='true' sx={{ fontSize: '30px', color: 'grey.50' }} />
-          <Typography variant='body2' sx={{ color: 'grey.50', fontWeight: 600 }}>오피스텔</Typography>
-        </Stack>
-        <Stack
-          component='button'
-          borderRadius={2}
-          justifyContent='center'
-          alignItems='center'
-          height={100}
-          sx={{ backgroundColor: '#ffba00', width: { laptop: '120px', mobile: '100%' }, cursor: 'pointer', border: 'none' }}
+          <TypeText>오피스텔</TypeText>
+        </TypeButtonContainer>
+        <TypeButtonContainer
+          as='button'
+          style={{ backgroundColor: '#FFBA00' }}
           onClick={() => router.push('/villa')}
         >
           <HomeIcon aria-hidden='true' sx={{ fontSize: '30px', color: 'grey.50' }} />
-          <Typography variant='body2' sx={{ color: 'grey.50', fontWeight: 600 }}>빌라, 투룸+</Typography>
-        </Stack>
-        <Stack
-          component='button'
-          borderRadius={2}
-          justifyContent='center'
-          alignItems='center'
-          height={100}
-          sx={{ backgroundColor: '#6D24FF', width: { laptop: '120px', mobile: '100%' }, cursor: 'pointer', border: 'none' }}
+          <TypeText>빌라, 투룸+</TypeText>
+        </TypeButtonContainer>
+        <TypeButtonContainer
+          as='button'
+          style={{ backgroundColor: '#6D24FF' }}
           onClick={() => router.push('/oneroom')}
         >
           <BedIcon aria-hidden='true' sx={{ fontSize: '30px', color: 'grey.50' }} />
-          <Typography variant='body2' sx={{ color: 'grey.50', fontWeight: 600 }}>원룸</Typography>
-        </Stack>
-      </Stack>
-    </Stack>
+          <TypeText>원룸</TypeText>
+        </TypeButtonContainer>
+      </TypeSelectContainer>
+    </Container>
   )
 }
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  margin-top: 80px;
+  @media (max-width: 767px) {
+    margin-top: 16px;
+    align-items: center;
+  }
+`
+
+const PreFilterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 383px;
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+
+`
+
 const MainPhraseContainer = styled.div`
+  display: inline-block;
+  width: 100%;
   margin-bottom: 16px;
   font-size: 16px;
   font-weight: 500;
+`
+
+const DistanceSelect = styled.select`
+  display: flex;
+  height: 48px;
+  padding: 16px;
+  background-color: var(--grey-100);
+  border-radius: 4px;
+  border: 1px solid var(--grey-200);
+`
+
+const TypeSelectContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+`
+
+const TypeButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  width: 120px;
+  gap: 4px;
+  cursor: pointer;
+  border: none;
+  @media (max-width: 767px) {
+    width: 100%;
+  }
+`
+
+const TypeText = styled.p`
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--grey-50);
 `
