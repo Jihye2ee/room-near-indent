@@ -59,6 +59,23 @@ export const baseTheme = createTheme({
         },
       },
     },
+    MuiAutocomplete: {
+      styleOverrides: {
+        listbox: {
+          backgroundColor: 'var(--grey-50)',
+          '& .MuiAutocomplete-option:hover': {
+            backgroundColor: 'var(--grey-100)',
+          },
+        },
+        noOptions: {
+          color: 'var(--grey-800)',
+          backgroundColor: 'var(--grey-50)',
+          border: 'none',
+          fontSize: 16,
+          fontWeight: 500,
+        },
+      },
+    },
   },
 })
 

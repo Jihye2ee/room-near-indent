@@ -6,9 +6,7 @@ import { useRecoilValue } from 'recoil'
 import { filterState } from '@/app/recoil-state'
 import { getKakaoAddressSearch, getKakaoKeywordSearch } from '@/src/data/local/queries'
 import { KakaoItem } from '@/src/data/local/types'
-import {
-  Autocomplete, autocompleteClasses, Box, Popper, styled, SxProps, Typography
-} from '@/src/ui/mui'
+import { Autocomplete, Box, SxProps, Typography } from '@/src/ui/mui'
 import { calculateBounds } from '@/src/utils/calculateBounds'
 import { Search } from '@mui/icons-material'
 
@@ -52,7 +50,6 @@ const AddressSearchInput = ({ onChange }: Props) => {
       disablePortal
       disableClearable
       fullWidth
-      PopperComponent={StyledPopper}
       options={options}
       onChange={(_, value) => handleOnChange(value)}
       noOptionsText='검색 결과가 없습니다'
@@ -61,7 +58,7 @@ const AddressSearchInput = ({ onChange }: Props) => {
       isOptionEqualToValue={(option, value) => 'id' in option && 'id' in value ? option.id === value.id : option.x === value.x && option.y === value.y}
       renderOption={(props, option) => {
         return (
-          <Box component='li' {...props} key={`${props.id}`} sx={optionsSxProps}>
+          <Box component='li' {...props} key={`${props.id}`}>
             <Typography
               variant='body2'
               color='grey.800'
@@ -108,11 +105,6 @@ const autoCompleteSx: SxProps = {
   '.MuiAutocomplete-endAdornment': { top: 'calc(50% - 12px)' },
   '.MuiAutocomplete-popupIndicator': { p: 0, color: 'grey.600' },
   '.MuiAutocomplete-popupIndicatorOpen': { rotate: '-180deg' },
-  // '.MuiAutocomplete-option': {backgroundColor: 'grey.200'}
-}
-
-const optionsSxProps: SxProps = {
-  backgroundColor: 'grey.200',
 }
 
 const addressSxProps: SxProps = {
@@ -120,34 +112,3 @@ const addressSxProps: SxProps = {
   overflow: 'hidden',
   whiteSpace: 'nowrap',
 }
-
-
-const StyledPopper = styled(Popper)({
-  [`& .${autocompleteClasses.popper}`]: {
-    boxSizing: 'border-box',
-    backgroundColor: 'grey.500',
-    '& ul': {
-      padding: 0,
-      margin: 0,
-      backgroundColor: 'grey.500',
-    },
-  },
-  [`& .${autocompleteClasses.option}`]: {
-    boxSizing: 'border-box',
-    backgroundColor: 'grey.500',
-    '& ul': {
-      padding: 0,
-      margin: 0,
-      backgroundColor: 'grey.500',
-    },
-  },
-  [`& .${autocompleteClasses.listbox}`]: {
-    boxSizing: 'border-box',
-    backgroundColor: 'grey.500',
-    '& ul': {
-      padding: 0,
-      margin: 0,
-      backgroundColor: 'grey.500',
-    },
-  },
-});
