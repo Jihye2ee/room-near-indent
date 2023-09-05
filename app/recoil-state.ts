@@ -2,6 +2,8 @@
 import { atom } from 'recoil'
 
 import { KakaoItem } from '@/src/data/local/types'
+import { Building, Item } from '@/src/data/officetel/types'
+import { PropertyInfo } from '@/src/data/types'
 
 export type State = {
   site: 'naver' | 'zigbang'
@@ -18,7 +20,7 @@ export type State = {
 export const initialFilterStateDefault: State = {
   site: 'zigbang',
   type: 'deposit',
-  distance: 0.7,
+  distance: 0.8,
   deposit: [0, 40000],
   rent: [0, 150],
   area: {
@@ -54,5 +56,24 @@ export const filterModalState = atom<ModalTypeState>({
     siteOpen: false,
     typeAndPriceOpen: false,
     mobileFilterOpen: false,
+  }
+})
+
+export type zigbangState = {
+  buildings: Building[]
+  items: Item[]
+  uniqueItemIds: number[]
+  displayedZigbangList: PropertyInfo[]
+  zigbangList: PropertyInfo[]
+}
+
+export const zigbangResultState = atom<zigbangState>({
+  key: 'mapState',
+  default: {
+    buildings: [],
+    items: [],
+    uniqueItemIds: [],
+    zigbangList: [],
+    displayedZigbangList: [],
   }
 })
