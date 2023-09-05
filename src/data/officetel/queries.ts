@@ -3,24 +3,21 @@ import queryString from 'query-string'
 
 import { State } from '@/app/recoil-state'
 
-type Section = {
-  type: string
-  title: string
-  item_ids: number[]
-}
-export const getOfficetelItemIDs = async (params: State) => {
-  const url = 'https://apis.zigbang.com/v2/officetels'
+import { Building, Item, Section } from './types'
+
+export const getOfficetelItemIDs = async (params: State): Promise<{ uniqueItemIds: number[], buildings: Building[], items: Item[] }> => {
+  const url = 'https://apis.zigbang.com/v2/items/officetel'
   const geohashValue = geohash.encode(params.area.y, params.area.x, 5)
   const queryParams = queryString.stringify({
-    deposit_gteq: params.deposit[0],
-    deposit_lteq: params.deposit[1],
-    rent_gteq: params.type === 'rent' ? params.rent[0] : undefined,
-    rent_lteq:  params.type === 'rent' ? params.rent[1] : undefined,
-    sales_type_in: params.type === 'rent' ? '월세': '전세',
-    buildings: true,
+    depositMin: params.deposit[0],
+    depositMax: params.deposit[1] === 40000 ? undefined : params.deposit[1],
+    rentMin: params.type === 'rent' ? params.rent[0] : undefined,
+    rentMax:  params.type === 'rent' ? params.rent[1] === 150 ? undefined : params.rent[1] : undefined,
+    'salesTypes[0]': params.type === 'rent' ? '월세': '전세',
+    checkAnyItemWithoutFilter: true,
+    withBuildings: true,
     domain: 'zigbang',
-    needHasNoFiltered: true,
-    geohash: geohashValue
+    geohash: geohashValue,
   })
 
   const response = await fetch(`${url}?${queryParams}`, {
@@ -33,10 +30,11 @@ export const getOfficetelItemIDs = async (params: State) => {
   if (!response.ok) throw new Error()
 
   const data = await response.json()
-  const itemIds: number[] = data.sections.map((section: Section) => section.item_ids.map((item_id: number) => item_id)).flat()
+  const itemIds: number[] = data.sections.map((section: Section) => section.itemIds.map((itemId: number) => itemId)).flat()
   const uniqueItemIds = Array.from(new Set(itemIds))
+  if (uniqueItemIds.length === 0) return { uniqueItemIds: [], buildings: [], items: [] }
 
-  if (uniqueItemIds.length === 0) return Promise.resolve([])
-
-  return uniqueItemIds
+  const buildings: Building[] = data.buildings.filter((building: Building) => building.count > 0)
+  const items: Item[] = data.items.filter((item: Item) => uniqueItemIds.includes(item.itemId))
+  return { uniqueItemIds, buildings, items }
 }
