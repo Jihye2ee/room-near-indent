@@ -27,7 +27,9 @@ const LandList = ({ items, loading }: Props) => {
     <Container tabIndex={0} aria-label='매물 목록'>
       <TotalCountText aria-label={`총 ${items.length}`}>총 {items.length}개</TotalCountText>
       {loading ? (
-        <LoadingContainer><LoaderIcon width={40} height={40} /></LoadingContainer>
+        <LoadingContainer>
+          <LoaderIcon width={40} height={40} />
+        </LoadingContainer>
       ) : (<>
       {items.length === 0 ? (
         <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>

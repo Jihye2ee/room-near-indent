@@ -66,6 +66,7 @@ const ItemImage = styled.img`
   max-height: 110px;
   aspect-ratio: 1.3333;
   border-radius: 12px;
+  object-fit: cover;
 `
 
 const TypeText = styled.div`
