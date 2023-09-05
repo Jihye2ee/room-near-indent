@@ -24,8 +24,8 @@ export default function Home() {
         <AddressSearchInput onChange={(value: KakaoItem) => setConditions({ ...conditions, area: value })} />
         <MainPhraseContainer>
           <DistanceSelect onChange={handleSelect}>
-            <option value='0.7'>걸어서 10분 이내</option>
-            <option value='1.5'>걸어서 20분 이내</option>
+            <option value='0.8'>걸어서 10분 이내</option>
+            <option value='1.6'>걸어서 20분 이내</option>
           </DistanceSelect>
         </MainPhraseContainer>
       </PreFilterContainer>
