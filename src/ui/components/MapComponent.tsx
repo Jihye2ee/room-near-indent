@@ -127,7 +127,7 @@ const MapComponent = () => {
 
     const newOverlays = zigbangResult.buildings.map(building => {
       const position = new window.kakao.maps.LatLng(building.lat, building.lng)
-      const content = `<div class="container" data-building-id="${building.id}"><div class="name">${building.name}</div><div class="count">${building.count}</div></div>`
+      const content = `<div class="container" data-building-id="${building.id}">${building.count}</div>`
       const customOverlay = new window.kakao.maps.CustomOverlay({
         position: position,
         content: content,
@@ -142,9 +142,18 @@ const MapComponent = () => {
     Array.from(document.getElementsByClassName('container')).forEach((element) => {
       const container = element as HTMLElement
       container.style.display = 'flex'
-      container.style.flexDirection = 'row'
-      container.style.flexGrow = '1'
-      container.style.cursor = 'pointer'
+      container.style.justifyContent = 'center'
+      container.style.alignItems = 'center'
+      container.style.textAlign = 'center'
+      container.style.width = '60px'
+      container.style.height = '60px'
+      container.style.backgroundColor = '#4696ff'
+      container.style.borderRadius = '80px'
+      container.style.padding = '16px'
+      container.style.color = 'white'
+      container.style.fontSize = '22px'
+      container.style.fontWeight = '600'
+      container.style.boxShadow = '2px 2px 4px rgba(0, 0, 0, 0.2)'
 
       container.onclick = () => {
         window.kakao.maps.event.preventMap()
@@ -157,28 +166,6 @@ const MapComponent = () => {
         )
         setZigbangResult({ ...zigbangResult, displayedZigbangList: newZigbangList })
       }
-    })
-
-    Array.from(document.getElementsByClassName('name')).forEach((element) => {
-      const name = element as HTMLElement
-      name.style.display = 'inline-block'
-      name.style.backgroundColor = 'white'
-      name.style.padding = '4px'
-      name.style.border = '1px solid #C9CFD6'
-      name.style.borderRight = 'none'
-      name.style.fontSize = '12px'
-      name.style.fontWeight = '600'
-      name.style.color = '#2C3136'
-    })
-
-    Array.from(document.getElementsByClassName('count')).forEach((element) => {
-      const count = element as HTMLElement
-      count.style.display = 'inline-block'
-      count.style.backgroundColor = '#4696ff'
-      count.style.color = 'white'
-      count.style.padding = '4px 8px'
-      count.style.fontSize = '12px'
-      count.style.fontWeight = '600'
     })
   }
 
