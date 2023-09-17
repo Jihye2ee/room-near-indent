@@ -1,20 +1,26 @@
 'use client'
-import { isEmpty } from 'lodash-es'
+import { isEmpty, set } from 'lodash-es'
+import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
-import { filterState, zigbangResultState } from '@/app/recoil-state'
+import { filterState, naverlandResultState, zigbangResultState } from '@/app/recoil-state'
+import { getNaverlandData } from '@/src/data/naverland/queries'
+import { ArticleData } from '@/src/data/types'
 import styled from '@emotion/styled'
 
 const kakaoMapSource = '//dapi.kakao.com/v2/maps/sdk.js?appkey=73ff0f3832dc2af330ffea582903b997&libraries=services&autoload=false'
 const MapComponent = () => {
-  const [conditions, setState] = useRecoilState(filterState)
+  const path = usePathname()
+  const conditions = useRecoilValue(filterState)
   const [map, setMap] = useState<any>(null)
   const [markers, setMarkers] = useState<any>(null)
   const [level, setLevel] = useState<number>(5)
   const [position, setPosition] = useState<any>(null)
   const [customOverlays, setCustomOverlays] = useState<any[]>([])
+
   const [zigbangResult, setZigbangResult] = useRecoilState(zigbangResultState)
+  const [naverlandResult, setNaverlanResult] = useRecoilState(naverlandResultState)
 
   useEffect(() => {
     const existingScript = document.querySelector(`script[src='${kakaoMapSource}']`)
@@ -117,7 +123,7 @@ const MapComponent = () => {
     createCustomeOverlay()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [zigbangResult, level, position])
+  }, [zigbangResult, level, position, naverlandResult])
 
   const createCustomeOverlay = () => {
     if (!isEmpty(customOverlays)) {
@@ -125,19 +131,50 @@ const MapComponent = () => {
       setCustomOverlays([])
     }
 
-    const newOverlays = zigbangResult.buildings.map(building => {
-      const position = new window.kakao.maps.LatLng(building.lat, building.lng)
-      const content = `<div class="container" data-building-id="${building.id}">${building.count}</div>`
-      const customOverlay = new window.kakao.maps.CustomOverlay({
-        position: position,
-        content: content,
-      })
-      customOverlay.setMap(map)
-      return customOverlay
-    })
+    if (conditions.site === 'zigbang') {
+      if (path === '/officetel') {
+        const newOverlays = zigbangResult.buildings!.map(building => {
+          const position = new window.kakao.maps.LatLng(building.lat, building.lng)
+          const content = `<div class="container" data-building-id="${building.id}">${building.count}</div>`
+          const customOverlay = new window.kakao.maps.CustomOverlay({
+            position: position,
+            content: content,
+          })
+          customOverlay.setMap(map)
+          return customOverlay
+        })
+        setCustomOverlays(newOverlays)
+        setMap(map)
+      } else {
+        const newOverlays = zigbangResult.clusterList!.map(cluster => {
+          const position = new window.kakao.maps.LatLng(cluster.lat, cluster.lng)
+          const count = cluster.items.length
+          const content = `<div class="container" data-building-id="${cluster.lat}-${cluster.lng}">${count}</div>`
 
-    setCustomOverlays(newOverlays)
-    setMap(map)
+          const customOverlay = new window.kakao.maps.CustomOverlay({
+            position: position,
+            content: content,
+          })
+          customOverlay.setMap(map)
+          return customOverlay
+        })
+        setCustomOverlays(newOverlays)
+        setMap(map)
+      }
+    } else {
+      const newOverlays = naverlandResult.ariticles.map(article => {
+        const position = new window.kakao.maps.LatLng(article.lat, article.lon)
+        const content = `<div class="container" data-building-id="${article.lgeo}">${article.count}</div>`
+        const customOverlay = new window.kakao.maps.CustomOverlay({
+          position: position,
+          content: content,
+        })
+        customOverlay.setMap(map)
+        return customOverlay
+      })
+      setCustomOverlays(newOverlays)
+      setMap(map)
+    }
 
     Array.from(document.getElementsByClassName('container')).forEach((element) => {
       const container = element as HTMLElement
@@ -155,16 +192,34 @@ const MapComponent = () => {
       container.style.fontWeight = '600'
       container.style.boxShadow = '2px 2px 4px rgba(0, 0, 0, 0.2)'
 
-      container.onclick = () => {
+      container.onclick = async () => {
         window.kakao.maps.event.preventMap()
-        const buildingId = container.getAttribute('data-building-id') ?? 0
-        const buildingItems = zigbangResult.items.filter(item =>
-          item.buildingId === Number(buildingId)
-        )
-        const newZigbangList = zigbangResult.zigbangList.filter(zigbang =>
-          buildingItems.some(item => item.itemId === zigbang.item_id)
-        )
-        setZigbangResult({ ...zigbangResult, displayedZigbangList: newZigbangList })
+        const buildingId = container.getAttribute('data-building-id') ?? ''
+        if (conditions.site === 'zigbang') {
+          if (path === '/officetel') {
+            const buildingItems = zigbangResult.items.filter(item =>
+              item.buildingId === Number(buildingId)
+            )
+            const newZigbangList = zigbangResult.zigbangList.filter(zigbang =>
+              buildingItems.some(item => item.itemId === zigbang.item_id)
+            )
+            setZigbangResult({ ...zigbangResult, displayedZigbangList: newZigbangList })
+          } else {
+            const buildingId = container.getAttribute('data-building-id') ?? ''
+            const cluster = zigbangResult.clusterList!.find(cluster =>
+              cluster.lat + '-' + cluster.lng === buildingId
+            )
+            const newZigbangList = zigbangResult.zigbangList.filter(zigbang => {
+              return cluster?.items.some(item => Number(item.itemId) === zigbang.item_id)
+            })
+            setZigbangResult({ ...zigbangResult, displayedZigbangList: newZigbangList })
+          }
+        } else {
+          const articleItem = naverlandResult.ariticles.find(article => article.lgeo === buildingId)
+
+          const naverItems: ArticleData = await getNaverlandData(path.replace('/', ''), conditions, naverlandResult.totalCount, naverlandResult.cortarNo, 1, buildingId)
+          setNaverlanResult({ ...naverlandResult, totalCount: articleItem?.count ?? 0, naverList: naverItems })
+        }
       }
     })
   }

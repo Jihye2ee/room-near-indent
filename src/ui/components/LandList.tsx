@@ -1,7 +1,8 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
+import { useRecoilValue } from 'recoil'
 
-import { PropertyInfo } from '@/src/data/types'
+import { zigbangResultState } from '@/app/recoil-state'
 import { LoaderIcon } from '@/src/style/icons'
 import styled from '@emotion/styled'
 import { Pagination } from '@mui/material'
@@ -9,29 +10,29 @@ import { Pagination } from '@mui/material'
 import LandListItem from './LandListItem'
 
 type Props = {
-  items: PropertyInfo[]
   loading: boolean
 }
 
-const LandList = ({ items, loading }: Props) => {
+const LandList = ({ loading }: Props) => {
   const itemsPerPage = 10
   const [currentPage, setCurrentPage] = useState<number>(1)
-  const totalItems = useMemo(() => items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [currentPage, items])
-  const totalPages = Math.ceil(items.length / itemsPerPage)
+  const landList = useRecoilValue(zigbangResultState)
+  const totalItems = useMemo(() => landList.displayedZigbangList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [currentPage, landList.displayedZigbangList])
+  const totalPages = Math.ceil(landList.displayedZigbangList.length / itemsPerPage)
 
   useEffect(() => {
     setCurrentPage(1)
-  }, [items])
+  }, [landList.displayedZigbangList])
 
   return (
     <Container tabIndex={0} aria-label='매물 목록'>
-      <TotalCountText aria-label={`총 ${items.length}`}>총 {items.length}개</TotalCountText>
+      <TotalCountText aria-label={`총 ${landList.displayedZigbangList.length}`}>총 {landList.displayedZigbangList.length}개</TotalCountText>
       {loading ? (
         <LoadingContainer>
           <LoaderIcon width={40} height={40} />
         </LoadingContainer>
       ) : (<>
-      {items.length === 0 ? (
+      {landList.displayedZigbangList.length === 0 ? (
         <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>
       ) : (<>
         {totalItems.map((item) => (

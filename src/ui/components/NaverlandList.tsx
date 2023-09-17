@@ -1,5 +1,7 @@
 'use client'
-import { ArticleData } from '@/src/data/types'
+import { useRecoilState, useRecoilValue } from 'recoil'
+
+import { naverlandResultState } from '@/app/recoil-state'
 import { LoaderIcon } from '@/src/style/icons'
 import { Pagination } from '@/src/ui/mui'
 import styled from '@emotion/styled'
@@ -7,32 +9,33 @@ import styled from '@emotion/styled'
 import NaverlandListItem from './NaverlandListItem'
 
 type Props = {
-  item?: ArticleData
-  totalCount: number
   handlePagination: (page: number) => void
   loading: boolean
 }
 
-const NaverlandList = ({ item, totalCount, handlePagination, loading }: Props) => {
+const NaverlandList = ({ handlePagination, loading }: Props) => {
+  const naverlandResult = useRecoilValue(naverlandResultState)
   const itemsPerPage = 20
-  const totalPages = Math.ceil(totalCount / itemsPerPage)
+  const totalPages = Math.ceil(naverlandResult.totalCount / itemsPerPage)
 
   return (
     <Container tabIndex={0} aria-label='매물 목록'>
-      <TotalCountText aria-label={`총 ${totalCount}`}>총 {totalCount}개</TotalCountText>
+      <TotalCountText aria-label={`총 ${naverlandResult.totalCount}`}>총 {naverlandResult.totalCount}개</TotalCountText>
        {loading ? (
-        <LoadingContainer><LoaderIcon width={40} height={40} /></LoadingContainer>
+        <LoadingContainer>
+          <LoaderIcon width={40} height={40} />
+        </LoadingContainer>
       ) : (<>
-        {totalCount === 0 ? (
+        {naverlandResult.totalCount === 0 ? (
         <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>
       ) : (<>
-        {item?.body.map((item, index) => (
+        {naverlandResult.naverList.body.map((item, index) => (
           <NaverlandListItem key={index} item={item} />
         ))}
         <Pagination
           defaultPage={1}
           count={totalPages}
-          page={item?.page}
+          page={naverlandResult.naverList.page}
           onChange={(_, page) => handlePagination(page)}
           sx={{ alignSelf: 'center', '.MuiPaginationItem-text': { color: 'grey.600' }, cursor: 'pointer', py: 2 }}
         />
@@ -52,7 +55,10 @@ const Container = styled.div`
 `
 
 const LoadingContainer = styled.div`
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 `
 
 const TotalCountText = styled.p`

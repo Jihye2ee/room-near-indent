@@ -53,7 +53,7 @@ const Container = styled.div`
   cursor: pointer;
   padding: 16px;
   :hover {
-    background-color: var(--grey-300);
+    background-color: var(--grey-200);
   }
 `
 
@@ -69,6 +69,7 @@ const ItemImage = styled.img`
   height: 110px;
   aspect-ratio: 1.3333;
   border-radius: 12px;
+  object-fit: cover;
 `
 
 const TypeText = styled.div`
