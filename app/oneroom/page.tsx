@@ -2,11 +2,11 @@
 import { isEmpty } from 'lodash-es'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { getCortarsInfo } from '@/src/data/local/queries'
 import { CortarInfo } from '@/src/data/local/types'
-import { getNaverlandData, getNaverLandDataTotalCount } from '@/src/data/naverland/queries'
+import { getNaverLandArticleData, getNaverlandData } from '@/src/data/naverland/queries'
 import { getOneroomIDs } from '@/src/data/oneroom/queries'
 import { getLandList } from '@/src/data/queries'
 import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
@@ -16,41 +16,43 @@ import MapComponent from '@/src/ui/components/MapComponent'
 import NaverlandList from '@/src/ui/components/NaverlandList'
 import styled from '@emotion/styled'
 
-import { filterState, State } from '../recoil-state'
+import { filterState, naverlandResultState, State, zigbangResultState } from '../recoil-state'
 
 const Oneroom = () => {
   const path = usePathname()
   const conditions = useRecoilValue(filterState)
-  const [landList, setLandList] = useState<PropertyInfo[]>([])
-  const [naverlandList, setNaverlandList] = useState<ArticleData>()
-  const [totalCount, setTotalCount] = useState<number>(0)
-  const [cortarNo, setCortarNo] = useState<string>('')
+  const [zigbangResult, setZigbangResult] = useRecoilState(zigbangResultState)
+  const [naverlandResult, setNaverlandResult] = useRecoilState(naverlandResultState)
   const [loading, setLoading] = useState(false)
+
   const applySearch = useCallback(async (state: State) => {
     if (state.site === 'naver') {
       const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
       const cortarNo = cortarsInfo.documents.filter(document => document.region_type === 'B')?.[0].code
-      const clusterData: ClusterData = await getNaverLandDataTotalCount(path.replace('/', ''), state, cortarNo)
+      const clusterData: ClusterData = await getNaverLandArticleData(path.replace('/', ''), state, cortarNo)
       const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
       const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
-      setNaverlandList(naverlist)
-      setCortarNo(cortarNo)
-      setTotalCount(totalCount)
+      setNaverlandResult({ totalCount: totalCount, ariticles: clusterData.data.ARTICLE, cortarNo: cortarNo, naverList: naverlist })
       setLoading(false)
     } else if (state.site === 'zigbang') {
-      const itemIDs = await getOneroomIDs(state)
-      const list: PropertyInfo[] = await getLandList(itemIDs)
+      const { uniqueItemIds, clusters, items } = await getOneroomIDs(state)
+      const list: PropertyInfo[] = await getLandList(uniqueItemIds)
       const newList = list.filter(item =>
         Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
         && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
-      setLandList(newList)
+      const newClusters = clusters?.filter(cluster =>
+        cluster.lat >= Number(state.area.bounds.bottomLat) && cluster.lat < Number(state.area.bounds.topLat)
+        && cluster.lng >= Number(state.area.bounds.leftLon) && cluster.lng < Number(state.area.bounds.rightLon)
+      )
+      setZigbangResult({ items, clusterList: newClusters, uniqueItemIds, zigbangList: list, displayedZigbangList: newList })
       setLoading(false)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path])
 
   const handlePagination = async (page: number) => {
-    const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), conditions, totalCount, cortarNo, page)
-    setNaverlandList(naverlist)
+    const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), conditions, naverlandResult.totalCount, naverlandResult.cortarNo, page)
+    setNaverlandResult({ ...naverlandResult, naverList: naverlist })
   }
 
   useEffect(() => {
@@ -71,9 +73,9 @@ const Oneroom = () => {
         </MapContainer>
         <LandListContainer>
           {conditions.site === 'zigbang' ? (
-            <LandList items={landList} loading={loading} />
+            <LandList loading={loading} />
           ) : (
-            <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
+            <NaverlandList handlePagination={handlePagination} loading={loading} />
           )}
         </LandListContainer>
       </Content>
@@ -102,7 +104,7 @@ const FilterContainer = styled.div`
 const Content = styled.div`
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: calc(100% - 60px);
   @media (max-width: 767px) {
     flex-direction: column;
   }

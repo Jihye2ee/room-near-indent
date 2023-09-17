@@ -6,7 +6,7 @@ import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { getCortarsInfo } from '@/src/data/local/queries'
 import { CortarInfo } from '@/src/data/local/types'
-import { getNaverlandData, getNaverLandDataTotalCount } from '@/src/data/naverland/queries'
+import { getNaverLandArticleData, getNaverlandData } from '@/src/data/naverland/queries'
 import { getOfficetelItemIDs } from '@/src/data/officetel/queries'
 import { getLandList } from '@/src/data/queries'
 import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
@@ -16,15 +16,15 @@ import MapComponent from '@/src/ui/components/MapComponent'
 import NaverlandList from '@/src/ui/components/NaverlandList'
 import styled from '@emotion/styled'
 
-import { filterState, State, zigbangResultState } from '../recoil-state'
+import { filterState, naverlandResultState, State, zigbangResultState } from '../recoil-state'
 
 const Officetel = () => {
   const path = usePathname()
   const conditions = useRecoilValue(filterState)
+
   const [zigbangResult, setZigbangResult] = useRecoilState(zigbangResultState)
-  const [naverlandList, setNaverlandList] = useState<ArticleData>()
-  const [totalCount, setTotalCount] = useState<number>(0)
-  const [cortarNo, setCortarNo] = useState<string>('')
+  const [naverlandResult, setNaverlandResult] = useRecoilState(naverlandResultState)
+
   const [loading, setLoading] = useState<boolean>(false)
 
   const applySearch = useCallback(async (state: State) => {
@@ -42,20 +42,18 @@ const Officetel = () => {
     } else if (state.site === 'naver') {
       const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
       const cortarNo = cortarsInfo.documents.filter(document => document.region_type === 'B')?.[0].code
-      const clusterData: ClusterData = await getNaverLandDataTotalCount(path.replace('/', ''), state, cortarNo)
+      const clusterData: ClusterData = await getNaverLandArticleData(path.replace('/', ''), state, cortarNo)
       const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
       const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
-      setNaverlandList(naverlist)
-      setTotalCount(totalCount)
-      setCortarNo(cortarNo)
+      setNaverlandResult({ totalCount: totalCount, ariticles: clusterData.data.ARTICLE, cortarNo: cortarNo, naverList: naverlist })
       setLoading(false)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handlePagination = async (page: number) => {
-    const naverlist = await getNaverlandData(path.replace('/', ''), conditions, totalCount, cortarNo, page)
-    setNaverlandList(naverlist)
+    const naverlist = await getNaverlandData(path.replace('/', ''), conditions, naverlandResult.totalCount, naverlandResult.cortarNo, page)
+    setNaverlandResult({ ...naverlandResult, naverList: naverlist })
   }
 
   useEffect(() => {
@@ -76,9 +74,9 @@ const Officetel = () => {
         </MapContainer>
         <LandListContainer>
           {conditions.site === 'zigbang' ? (
-            <LandList items={zigbangResult.displayedZigbangList} loading={loading} />
+            <LandList loading={loading} />
           ) : (
-            <NaverlandList item={naverlandList} totalCount={totalCount} handlePagination={handlePagination} loading={loading} />
+            <NaverlandList handlePagination={handlePagination} loading={loading} />
           )}
         </LandListContainer>
       </Content>
