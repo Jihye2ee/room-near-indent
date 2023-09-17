@@ -3,7 +3,8 @@ import { atom } from 'recoil'
 
 import { KakaoItem } from '@/src/data/local/types'
 import { Building, Item } from '@/src/data/officetel/types'
-import { PropertyInfo } from '@/src/data/types'
+import { ArticleData, Cluster, PropertyInfo } from '@/src/data/types'
+import { VillaItems } from '@/src/data/villa/types'
 
 export type State = {
   site: 'naver' | 'zigbang'
@@ -60,20 +61,50 @@ export const filterModalState = atom<ModalTypeState>({
 })
 
 export type zigbangState = {
-  buildings: Building[]
+  buildings?: Building[]
   items: Item[]
   uniqueItemIds: number[]
   displayedZigbangList: PropertyInfo[]
   zigbangList: PropertyInfo[]
+  clusterList?: VillaItems[]
 }
 
 export const zigbangResultState = atom<zigbangState>({
-  key: 'mapState',
+  key: 'zigbangResultState',
   default: {
     buildings: [],
     items: [],
     uniqueItemIds: [],
     zigbangList: [],
     displayedZigbangList: [],
+    clusterList: [{
+      items: [{
+        itemId: '0',
+        lat: 0,
+        lng: 0,
+      }],
+      lat: 0,
+      lng: 0,
+    },],
+  }
+})
+
+export type naverlandState = {
+  ariticles: Cluster[]
+  naverList: ArticleData
+  cortarNo: string
+  totalCount: number
+}
+export const naverlandResultState = atom<naverlandState>({
+  key: 'naverlandResultState',
+  default: {
+    cortarNo: '',
+    ariticles: [],
+    naverList: {
+      more: false,
+      page: 1,
+      body: []
+    },
+    totalCount: 0,
   }
 })
