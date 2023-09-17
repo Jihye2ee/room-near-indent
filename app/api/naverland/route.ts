@@ -1,5 +1,5 @@
 import { isNil } from 'lodash-es'
-import { NextRequest, NextResponse, userAgent } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 export async function GET(req: NextRequest) {
@@ -14,13 +14,13 @@ export async function GET(req: NextRequest) {
     }
 
     const userAgent = getRandomUserAgent()
-    console.log('[userAgent]', userAgent)
     const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Origin': 'm.land.naver.com',
         'Referer': 'https://m.land.naver.com/',
-        'User-Agent': userAgent
+        'User-Agent': userAgent,
+        'Access-Control-Allow-Origin': '*',
       }
     })
 
