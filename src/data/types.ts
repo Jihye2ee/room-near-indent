@@ -1,3 +1,13 @@
+import { KakaoKeywordItem } from './local/types'
+
+export type CategoryGroup = {
+  convenience_store?: KakaoKeywordItem[]
+  hypermarket?: KakaoKeywordItem[]
+  laundromat?: KakaoKeywordItem[]
+  cafe?: KakaoKeywordItem[]
+  gym?: KakaoKeywordItem[]
+}
+
 export type PropertyInfo = {
   address: string
   address1: string
@@ -19,6 +29,7 @@ export type PropertyInfo = {
     lat: number
     lng: number
   }
+  category_group: CategoryGroup
 }
 
 export type NaverlandItem = {
@@ -126,6 +137,7 @@ export type ArticleItem = {
   tradeCheckedByOwner: boolean // false,
   dtlAddrYn: string // "N",
   dtlAddr: string // ""
+  category_group: CategoryGroup
 }
 
 export type ClusterData = {
