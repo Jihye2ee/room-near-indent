@@ -1,5 +1,5 @@
 'use client'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useRecoilState } from 'recoil'
 
 import { filterModalState, filterState } from '@/app/recoil-state'
@@ -17,6 +17,9 @@ import SiteSelect from './SiteSelect'
 import TypeAndPriceSelect from './TypeAndPriceSelect'
 
 const FilterBox = () => {
+  const siteRef = useRef<HTMLDivElement>(null)
+  const typeAndPriceRef = useRef<HTMLDivElement>(null)
+
   const [conditions, setState] = useRecoilState(filterState)
   const [modalState, setModalState] = useRecoilState(filterModalState)
 
@@ -28,6 +31,23 @@ const FilterBox = () => {
     conditions.rent[1] === 150 ? '' : rentMarks.find(mark => mark.value === conditions.rent[1])?.label ?? ''
   , [conditions.rent])
 
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (siteRef.current && !siteRef.current.contains(event.target) && modalState.siteOpen) {
+        setModalState(prevState => ({ ...prevState, siteOpen: false }))
+      }
+      if (typeAndPriceRef.current && !typeAndPriceRef.current.contains(event.target) && modalState.typeAndPriceOpen) {
+        setModalState(prevState => ({ ...prevState, typeAndPriceOpen: false }))
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [typeAndPriceRef, setModalState, modalState.siteOpen, modalState.typeAndPriceOpen])
+
   return (
     <Container>
       <SearchContainer>
@@ -36,8 +56,7 @@ const FilterBox = () => {
           <TuneIcon width={24} height={24} sx={{ color: 'grey.800', m: 1, cursor: 'pointer', display: { laptop: 'none', mobile: 'block' } }}/>
         </MobileFilterContainer>
       </SearchContainer>
-
-      <FilterContainer>
+      <FilterContainer ref={siteRef}>
         <FilterMenu as='button' onClick={() => setModalState({ siteOpen: !modalState.siteOpen, mobileFilterOpen: false, typeAndPriceOpen: false })} selected={modalState.siteOpen}>
           <FilterText selected={modalState.siteOpen}>{conditions.site === 'zigbang' ? '직방' : '네이버 부동산'}</FilterText>
           {modalState.siteOpen
@@ -49,7 +68,7 @@ const FilterBox = () => {
           {modalState.siteOpen && <SiteSelect isOpen={modalState.siteOpen} onClose={() => setModalState({ siteOpen: false, typeAndPriceOpen: false, mobileFilterOpen: false })}/>}
         </FilterSelect>
       </FilterContainer>
-      <FilterContainer>
+      <FilterContainer ref={typeAndPriceRef}>
         <FilterMenu as='button' onClick={() => setModalState({ typeAndPriceOpen: !modalState.typeAndPriceOpen, siteOpen: false, mobileFilterOpen: false })} selected={modalState.typeAndPriceOpen}>
           <FilterText selected={modalState.typeAndPriceOpen}>
             {conditions.type === 'deposit'
