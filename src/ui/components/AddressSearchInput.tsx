@@ -20,7 +20,7 @@ const AddressSearchInput = ({ onChange }: Props) => {
   const [options, setOptions] = useState<KakaoItem[]>([])
   const handleOnChange = ((value: KakaoItem | null) => {
     if (!value) return
-    const bounds = calculateBounds(conditions.distance ?? 2, Number(value.y), Number(value.x))
+    const bounds = calculateBounds(conditions.distance ?? 1.5, Number(value.y), Number(value.x))
     const newValue = { ...value, bounds } as KakaoItem
     onChange(newValue)
   })
