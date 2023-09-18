@@ -22,12 +22,12 @@ export default function Home() {
     <Container role='navigation' aria-label='주거 유형 선택'>
       <PreFilterContainer>
         <AddressSearchInput onChange={(value: KakaoItem) => setConditions({ ...conditions, area: value })} />
-        <MainPhraseContainer>
+        {/* <MainPhraseContainer>
           <DistanceSelect onChange={handleSelect}>
             <option value='0.8'>걸어서 10분 이내</option>
             <option value='1.6'>걸어서 20분 이내</option>
           </DistanceSelect>
-        </MainPhraseContainer>
+        </MainPhraseContainer> */}
       </PreFilterContainer>
       <TypeSelectContainer>
         <TypeButtonContainer
@@ -55,6 +55,10 @@ export default function Home() {
           <TypeText>원룸</TypeText>
         </TypeButtonContainer>
       </TypeSelectContainer>
+      {/*  TODO: 편의점, 세탁소 표시 */}
+      {/* <CategoryOptionsContainer>
+        <CategoryOptionTitle>편의시설을 함께 검색해보세요!</CategoryOptionTitle>
+      </CategoryOptionsContainer> */}
     </Container>
   )
 }
@@ -73,29 +77,32 @@ const Container = styled.div`
 
 const PreFilterContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   min-width: 383px;
   @media (max-width: 767px) {
     width: 100%;
+    flex-direction: column;
   }
-
 `
 
 const MainPhraseContainer = styled.div`
   display: inline-block;
-  width: 100%;
-  margin-bottom: 16px;
   font-size: 16px;
   font-weight: 500;
 `
 
 const DistanceSelect = styled.select`
   display: flex;
-  height: 48px;
-  padding: 16px;
+  height: 42px;
   background-color: var(--grey-100);
   border-radius: 4px;
   border: 1px solid var(--grey-200);
+  color: var(--grey-600);
+  margin: 8px 0;
+  margin-left: 8px;
+  @media (max-width: 767px) {
+    margin-left: 0;
+  }
 `
 
 const TypeSelectContainer = styled.div`
