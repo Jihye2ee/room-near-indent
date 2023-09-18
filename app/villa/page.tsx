@@ -2,13 +2,13 @@
 import { isEmpty } from 'lodash-es'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { getCortarsInfo } from '@/src/data/local/queries'
-import { CortarInfo } from '@/src/data/local/types'
+import { getCortarsInfo, getKakaoKeywordSearch } from '@/src/data/local/queries'
+import { CortarInfo, KakaoAddressResult, KakaoKeywordItem } from '@/src/data/local/types'
 import { getNaverLandArticleData, getNaverlandData } from '@/src/data/naverland/queries'
 import { getLandList } from '@/src/data/queries'
-import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
+import { ArticleData, ArticleItem, ClusterData, PropertyInfo } from '@/src/data/types'
 import { getVillaItemIDs } from '@/src/data/villa/queries'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
@@ -21,7 +21,7 @@ import { filterState, naverlandResultState, State, zigbangResultState } from '..
 const Villa = () => {
   const path = usePathname()
   const conditions = useRecoilValue(filterState)
-  const [zigbangResult, setZigbangResult] = useRecoilState(zigbangResultState)
+  const setZigbangResult = useSetRecoilState(zigbangResultState)
   const [naverlandResult, setNaverlandResult] = useRecoilState(naverlandResultState)
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -32,26 +32,51 @@ const Villa = () => {
       const clusterData: ClusterData = await getNaverLandArticleData(path.replace('/', ''), state, cortarNo)
       const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
       const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
+      const newList = await getConvinientStoreList(naverlist.body) as ArticleItem[]
+      naverlist.body = newList
       setNaverlandResult({ totalCount: totalCount, ariticles: clusterData.data.ARTICLE, cortarNo: cortarNo, naverList: naverlist })
       setLoading(false)
     } else if (state.site === 'zigbang') {
       const { uniqueItemIds, clusters, items } = await getVillaItemIDs(state)
       const list: PropertyInfo[] = await getLandList(uniqueItemIds)
-      const newList = list.filter(item =>
+      const filteredList = list.filter(item =>
         Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
         && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
+      const newList = await getConvinientStoreList(filteredList) as PropertyInfo[]
       const newClusters = clusters?.filter(cluster =>
         cluster.lat >= Number(state.area.bounds.bottomLat) && cluster.lat < Number(state.area.bounds.topLat)
         && cluster.lng >= Number(state.area.bounds.leftLon) && cluster.lng < Number(state.area.bounds.rightLon)
       )
+
       setZigbangResult({ items, clusterList: newClusters, uniqueItemIds, zigbangList: list, displayedZigbangList: newList })
       setLoading(false)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+  const getConvinientStoreList =  async (filteredList: PropertyInfo[] | ArticleItem[]) => {
+    const results = await Promise.all(
+      filteredList.map(async listItem => {
+        const x = 'random_location' in listItem ? listItem.random_location.lng.toString() : listItem.lng.toString()
+        const y = 'random_location' in listItem ? listItem.random_location.lat.toString() : listItem.lat.toString()
+
+        const keywordResult: KakaoAddressResult = await getKakaoKeywordSearch({ query: '편의점', x, y, radius: 200 })
+        return {
+          ...listItem,
+          category_group: {
+            ...listItem.category_group,
+            convenience_store: keywordResult.documents as KakaoKeywordItem[]
+          }
+        }
+      })
+    )
+
+    return results
+  }
 
   const handlePagination = async (page: number) => {
     const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), conditions, naverlandResult.totalCount, naverlandResult.cortarNo, page)
+    const newList = await getConvinientStoreList(naverlist.body) as ArticleItem[]
+    naverlist.body = newList
     setNaverlandResult({ ...naverlandResult, naverList: naverlist })
   }
 
