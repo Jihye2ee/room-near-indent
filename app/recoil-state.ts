@@ -21,7 +21,7 @@ export type State = {
 export const initialFilterStateDefault: State = {
   site: 'zigbang',
   type: 'deposit',
-  distance: 0.8,
+  distance: 1.5,
   deposit: [0, 40000],
   rent: [0, 150],
   area: {
