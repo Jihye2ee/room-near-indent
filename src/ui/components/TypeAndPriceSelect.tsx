@@ -27,7 +27,7 @@ const TypeAndPriceSelect = ({ isOpen, onClose }: Props) => {
           onClick={() => setConditions({ ...conditions, type: 'deposit' })}
           onKeyDown={(e) => e.key === 'Enter' && setConditions({ ...conditions, type: 'deposit' })}
         >
-          {conditions.type === 'deposit' ? <CheckBoxIcon sx={{ color: 'grey.600' }}/> : <CheckBoxOutlineBlankIcon sx={{ color: 'grey.600' }} />}
+          {conditions.type === 'deposit' ? <CheckBoxIcon sx={{ color: '#356EFB' }}/> : <CheckBoxOutlineBlankIcon sx={{ color: '#356EFB' }} />}
           <TypeText>전세</TypeText>
         </TypeCheckBox>
         <TypeCheckBox
@@ -37,7 +37,7 @@ const TypeAndPriceSelect = ({ isOpen, onClose }: Props) => {
           onClick={() => setConditions({ ...conditions, type: 'rent' })}
           onKeyDown={(e) => e.key === 'Enter' && setConditions({ ...conditions, type: 'rent' })}
         >
-          {conditions.type === 'rent' ? <CheckBoxIcon sx={{ color: 'grey.600' }} /> : <CheckBoxOutlineBlankIcon sx={{ color: 'grey.600' }} />}
+          {conditions.type === 'rent' ? <CheckBoxIcon sx={{ color: '#356EFB' }} /> : <CheckBoxOutlineBlankIcon sx={{ color: '#356EFB' }} />}
           <TypeText>월세</TypeText>
         </TypeCheckBox>
       </TypeCheckboxContainer>

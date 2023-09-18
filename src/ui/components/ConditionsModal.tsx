@@ -219,12 +219,13 @@ const SiteSelectButton = styled.div<{ selected: boolean }>`
   border: 1px solid var(--grey-200);
   border-radius: 12px;
   padding: 16px;
-  background-color: ${(props) => props.selected ? 'var(--blue-300)' : 'var(--grey-50)'};
+  background-color: ${(props) => props.selected ? 'var(--blue-500)' : 'var(--grey-50)'};
   cursor: pointer;
 
   font-size: 14px;
-  font-weight: 500;
-  color: var(--grey-800);
+  font-weight: 600;
+  color: ${(props) => props.selected ? 'var(--grey-200)' : 'var(--grey-400)'};
+
 `
 
 const TypeCheckboxContainer = styled.div`
@@ -234,7 +235,7 @@ const TypeCheckboxContainer = styled.div`
   padding: 0 16px;
   padding-bottom: 32px;
   margin-top: 16px;
-  border-bottom: 4px solid var(--grey-200);
+  border-bottom: 4px solid var(--grey-300);
 `
 
 const TypeCheckBox = styled.div`
