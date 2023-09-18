@@ -1,4 +1,5 @@
 'use client'
+import { isEmpty, isNil } from 'lodash-es'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
@@ -32,7 +33,10 @@ const LandListItem = ({ item }: Props) => {
             )}
           <InfoText>{item.floor}층 / {item.size_m2}m<sup>2</sup></InfoText>
           <InfoText>{item.address1}</InfoText>
-            <InfoText>{item.title}</InfoText>
+          <InfoText>{item.title}</InfoText>
+          {!isNil(item.category_group) && !isNil(item.category_group.convenience_store) && (
+            !isEmpty(item.category_group.convenience_store?.[0]) && <InfoText>✅ {item.category_group.convenience_store?.[0].distance}m 내 {item.category_group.convenience_store?.[0].place_name}</InfoText>
+          )}
         </InfoContainer>
       </Content>
     </Container>

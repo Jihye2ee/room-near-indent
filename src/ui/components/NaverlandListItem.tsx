@@ -1,4 +1,5 @@
 'use client'
+import { isEmpty, isNil } from 'lodash-es'
 import Link from 'next/link'
 import { useMemo } from 'react'
 
@@ -31,6 +32,9 @@ const NaverlandListItem = ({ item }: Props) => {
           )}
           <InfoText aria-label={`${item.flrInfo}층 전용${item.spc2}m2`}>{item.flrInfo}층, {item.spc2}/{item.spc1}m<sup>2</sup></InfoText>
           <InfoText aria-label={item.atclFetrDesc}>{item.atclFetrDesc}</InfoText>
+          {!isNil(item.category_group) && !isNil(item.category_group.convenience_store) && (
+            !isEmpty(item.category_group.convenience_store?.[0]) && <InfoText>✅ {item.category_group.convenience_store?.[0].distance}m 내 {item.category_group.convenience_store?.[0].place_name}</InfoText>
+          )}
           <TagContainer>
             {item.tagList.map((tag: string, index: number) => (
               <TagText key={`tag-${index}`}>{tag}</TagText>
