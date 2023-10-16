@@ -168,7 +168,7 @@ const MapComponent = () => {
         setCustomOverlays(newOverlays)
         setMap(map)
       } else {
-        const newOverlays = zigbangResult.clusterList!.map(cluster => {
+        const newOverlays = zigbangResult.clusterList?.map(cluster => {
           const position = new window.kakao.maps.LatLng(cluster.lat, cluster.lng)
           const count = cluster.items.length
           const content = `<div class="container" data-building-id="${cluster.lat}-${cluster.lng}">${count}</div>`
@@ -180,7 +180,7 @@ const MapComponent = () => {
           customOverlay.setMap(map)
           return customOverlay
         })
-        setCustomOverlays(newOverlays)
+        setCustomOverlays(newOverlays ?? [])
         setMap(map)
       }
     } else {
