@@ -1,6 +1,5 @@
 'use client'
 import { isEmpty, isNil } from 'lodash-es'
-import Link from 'next/link'
 import { useMemo } from 'react'
 
 import { PropertyInfo } from '@/src/data/types'
@@ -9,10 +8,11 @@ import styled from '@emotion/styled'
 
 type Props = {
   item: PropertyInfo
+  openModal: (itemId: number) => void
 }
 
 const ALT_IMAGE = '/alt_image.svg'
-const LandListItem = ({ item }: Props) => {
+const LandListItem = ({ item, openModal }: Props) => {
   const imageURL = useMemo(() => item.images_thumbnail && `${item.images_thumbnail}?w=800&q=70&a=1`, [item.images_thumbnail])
   const handleImageError = ((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = ALT_IMAGE
@@ -21,8 +21,8 @@ const LandListItem = ({ item }: Props) => {
   })
 
   return (
-    <Container>
-      <Content aria-label='더보기' href={`https://www.zigbang.com/home/villa/items/${item.item_id}`} target='_blank'>
+    <Container aria-label='상세보기' onClick={() => openModal(item.item_id)}>
+      <Content>
         <ItemImage src={imageURL ?? ALT_IMAGE} alt='' onError={handleImageError} />
         <InfoContainer>
           <TypeText aria-label={item.service_type}>{item.service_type}</TypeText>
@@ -58,7 +58,7 @@ const Container = styled.div`
   }
 `
 
-const Content = styled(Link)`
+const Content = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;

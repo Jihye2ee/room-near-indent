@@ -4,10 +4,10 @@ import { useRecoilValue } from 'recoil'
 
 import { zigbangResultState } from '@/app/recoil-state'
 import { LoaderIcon } from '@/src/style/icons'
+import LandItemDetailModal from '@/src/ui/components/LandItemDetailModal'
+import LandListItem from '@/src/ui/components/LandListItem'
 import styled from '@emotion/styled'
 import { Pagination } from '@mui/material'
-
-import LandListItem from './LandListItem'
 
 type Props = {
   loading: boolean
@@ -19,13 +19,24 @@ const LandList = ({ loading }: Props) => {
   const landList = useRecoilValue(zigbangResultState)
   const totalItems = useMemo(() => landList.displayedZigbangList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [currentPage, landList.displayedZigbangList])
   const totalPages = Math.ceil(landList.displayedZigbangList.length / itemsPerPage)
+  const [isOpenDetailModal, setIsOpenDetailModal] = useState<boolean>(false)
+  const [selectedItemId, setSelectedItemId] = useState<number>(0)
+  const openDetailModal = (itemId: number) => {
+    document.body.style.overflow = 'hidden'
+    setSelectedItemId(itemId)
+    setIsOpenDetailModal(true)
+  }
+  const closeDetailModal = () => {
+    document.body.style.overflow = 'auto'
+    setIsOpenDetailModal(false)
+  }
 
   useEffect(() => {
     setCurrentPage(1)
   }, [landList.displayedZigbangList])
 
   return (
-    <Container tabIndex={0} aria-label='매물 목록'>
+    <Container aria-label='매물 목록' aria-hidden={isOpenDetailModal} tabIndex={isOpenDetailModal ? -1 : 0}>
       <TotalCountText aria-label={`총 ${landList.displayedZigbangList.length}`}>총 {landList.displayedZigbangList.length}개</TotalCountText>
       {loading ? (
         <LoadingContainer>
@@ -36,7 +47,7 @@ const LandList = ({ loading }: Props) => {
         <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>
       ) : (<>
         {totalItems.map((item) => (
-          <LandListItem key={item.item_id} item={item} />
+          <LandListItem key={item.item_id} item={item} openModal={openDetailModal} />
         ))}
         <Pagination
           defaultPage={1}
@@ -47,6 +58,7 @@ const LandList = ({ loading }: Props) => {
         />
       </>)}
      </>)}
+     {isOpenDetailModal && <LandItemDetailModal itemId={selectedItemId} closeModal={closeDetailModal} />}
     </Container>
   )
 }
