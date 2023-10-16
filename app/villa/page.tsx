@@ -42,13 +42,13 @@ const Villa = () => {
       const filteredList = list.filter(item =>
         Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
         && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
-      const newList = await getConvinientStoreList(filteredList) as PropertyInfo[]
+      // const newList = await getConvinientStoreList(filteredList) as PropertyInfo[]
       const newClusters = clusters?.filter(cluster =>
         cluster.lat >= Number(state.area.bounds.bottomLat) && cluster.lat < Number(state.area.bounds.topLat)
         && cluster.lng >= Number(state.area.bounds.leftLon) && cluster.lng < Number(state.area.bounds.rightLon)
       )
 
-      setZigbangResult({ items, clusterList: newClusters, uniqueItemIds, zigbangList: list, displayedZigbangList: newList })
+      setZigbangResult({ items, clusterList: newClusters, uniqueItemIds, zigbangList: list, displayedZigbangList: filteredList })
       setLoading(false)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

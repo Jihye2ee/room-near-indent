@@ -1,6 +1,7 @@
 import queryString from 'query-string'
 
-import { KeywordQueryParams } from './types'
+import { ArticleItem, PropertyInfo } from '../types'
+import { KakaoAddressResult, KakaoKeywordItem, KeywordQueryParams } from './types'
 
 export const getCortarsInfo = async (coords: { x: string, y: string }) => {
   const queryParams = queryString.stringify({
@@ -53,4 +54,24 @@ export const getKakaoKeywordSearch = async (queryParams: KeywordQueryParams) => 
 
   const data = response.json()
   return data
+}
+
+export const getConvinientStoreList =  async (filteredList: PropertyInfo[] | ArticleItem[]) => {
+  const results = await Promise.all(
+    filteredList.map(async listItem => {
+      const x = 'random_location' in listItem ? listItem.random_location.lng.toString() : listItem.lng.toString()
+      const y = 'random_location' in listItem ? listItem.random_location.lat.toString() : listItem.lat.toString()
+
+      const keywordResult: KakaoAddressResult = await getKakaoKeywordSearch({ query: '편의점', x, y, radius: 200 })
+      return {
+        ...listItem,
+        category_group: {
+          ...listItem.category_group,
+          convenience_store: keywordResult.documents as KakaoKeywordItem[]
+        }
+      }
+    })
+  )
+
+  return results
 }

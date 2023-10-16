@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { getCortarsInfo, getKakaoKeywordSearch } from '@/src/data/local/queries'
-import { CortarInfo, KakaoAddressResult, KakaoKeywordItem } from '@/src/data/local/types'
+import { getConvinientStoreList, getCortarsInfo } from '@/src/data/local/queries'
+import { CortarInfo } from '@/src/data/local/types'
 import { getNaverLandArticleData, getNaverlandData } from '@/src/data/naverland/queries'
 import { getOfficetelItemIDs } from '@/src/data/officetel/queries'
 import { getLandList } from '@/src/data/queries'
@@ -36,8 +36,7 @@ const Officetel = () => {
       const newBuildingList = buildings.filter(building => building.lng >= Number(state.area.bounds.leftLon) && building.lng < Number(state.area.bounds.rightLon)
         && building.lat >= Number(state.area.bounds.bottomLat) && building.lat < Number(state.area.bounds.topLat))
 
-      const newList = await getConvinientStoreList(filteredList) as PropertyInfo[]
-      setZigbangResult({ items, buildings: newBuildingList, uniqueItemIds, zigbangList, displayedZigbangList: newList })
+      setZigbangResult({ items, buildings: newBuildingList, uniqueItemIds, zigbangList, displayedZigbangList: filteredList })
       setLoading(false)
     } else if (state.site === 'naver') {
       const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
@@ -57,26 +56,6 @@ const Officetel = () => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const getConvinientStoreList =  async (filteredList: PropertyInfo[] | ArticleItem[]) => {
-    const results = await Promise.all(
-      filteredList.map(async listItem => {
-        const x = 'random_location' in listItem ? listItem.random_location.lng.toString() : listItem.lng.toString()
-        const y = 'random_location' in listItem ? listItem.random_location.lat.toString() : listItem.lat.toString()
-
-        const keywordResult: KakaoAddressResult = await getKakaoKeywordSearch({ query: '편의점', x, y, radius: 200 })
-        return {
-          ...listItem,
-          category_group: {
-            ...listItem.category_group,
-            convenience_store: keywordResult.documents as KakaoKeywordItem[]
-          }
-        }
-      })
-    )
-
-    return results
-  }
 
   const handlePagination = async (page: number) => {
     const naverlist = await getNaverlandData(path.replace('/', ''), conditions, naverlandResult.totalCount, naverlandResult.cortarNo, page)
