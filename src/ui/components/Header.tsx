@@ -74,7 +74,7 @@ const drawerStyleProp: SxProps = {
 const Container = styled.div`
   position: sticky;
   top: 0;
-  z-index: 9999;
+  z-index: 0;
   background-color: var(--grey-50);
   border-bottom: 1px solid var(--grey-200);
 `
