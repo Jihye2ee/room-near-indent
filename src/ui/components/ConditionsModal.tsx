@@ -235,7 +235,7 @@ const TypeCheckboxContainer = styled.div`
   padding: 0 16px;
   padding-bottom: 32px;
   margin-top: 16px;
-  border-bottom: 4px solid var(--grey-300);
+  border-bottom: 4px solid var(--grey-200);
 `
 
 const TypeCheckBox = styled.div`

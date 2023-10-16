@@ -6,11 +6,10 @@ import { useRecoilValue } from 'recoil'
 import { filterState } from '@/app/recoil-state'
 import { getKakaoAddressSearch, getKakaoKeywordSearch } from '@/src/data/local/queries'
 import { KakaoItem } from '@/src/data/local/types'
+import { TextFieldInput } from '@/src/ui/atoms'
 import { Autocomplete, Box, SxProps, Typography } from '@/src/ui/mui'
 import { calculateBounds } from '@/src/utils/calculateBounds'
 import { Search } from '@mui/icons-material'
-
-import { TextFieldInput } from '../atoms'
 
 type Props = {
   onChange: (value: KakaoItem) => void
