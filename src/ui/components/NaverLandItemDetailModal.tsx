@@ -25,7 +25,7 @@ const NaverLandItemDetailModal = ({ item, closeModal }: Props) => {
   const { totalCount, cortarNo } = useRecoilValue(naverlandResultState)
   const [showDescriptionMore, setShowDescriptionMore] = useState(false)
   const [itemDetail, setItemDetail] = useState<NaverLandDetail>()
-  const [facilityData, setFacilityData] = useState<any>()
+  const [facilityData, setFacilityData] = useState<any[]>([])
   const [areaUnit, setAreaUnit] = useState<'pyeong' | 'm2'>('m2')
 
   useEffect(() => {
@@ -41,7 +41,9 @@ const NaverLandItemDetailModal = ({ item, closeModal }: Props) => {
 
       try {
         const facilityData = await getNaverLandFacilityData(item.atclNo, item.lat, item.lng)
-        setFacilityData(facilityData.nearFacility)
+        if (facilityData.nearFacility) {
+          setFacilityData(facilityData.nearFacility)
+        }
       } catch {
         setFacilityData([])
         return
@@ -133,7 +135,7 @@ const NaverLandItemDetailModal = ({ item, closeModal }: Props) => {
         <NearbyPointContainer>
           <LandDetailTitle>주변 편의시설 (1km 이내)</LandDetailTitle>
           <NearbyPointList>
-            {facilityData.filter((facility: any) => facility.closestDist <= 1000).map((item: any) => (
+            {facilityData && facilityData.filter((facility: any) => facility.closestDist <= 1000).map((item: any) => (
               <NearFacilityItem key={item.complexView.cssName} item={item} />
             ))}
           </NearbyPointList>

@@ -1,10 +1,9 @@
 'use client'
 import { useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 import { naverlandResultState } from '@/app/recoil-state'
-import { getNaverlandData } from '@/src/data/naverland/queries'
-import { ArticleData, ArticleItem } from '@/src/data/types'
+import { ArticleItem } from '@/src/data/types'
 import { LoaderIcon } from '@/src/style/icons'
 import { Pagination } from '@/src/ui/mui'
 import styled from '@emotion/styled'
