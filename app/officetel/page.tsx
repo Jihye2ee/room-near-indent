@@ -4,12 +4,12 @@ import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { getConvinientStoreList, getCortarsInfo } from '@/src/data/local/queries'
+import { getCortarsInfo } from '@/src/data/local/queries'
 import { CortarInfo } from '@/src/data/local/types'
 import { getNaverLandArticleData, getNaverlandData } from '@/src/data/naverland/queries'
 import { getOfficetelItemIDs } from '@/src/data/officetel/queries'
 import { getLandList } from '@/src/data/queries'
-import { ArticleData, ArticleItem, ClusterData, PropertyInfo } from '@/src/data/types'
+import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
 import MapComponent from '@/src/ui/components/MapComponent'
@@ -49,8 +49,6 @@ const Officetel = () => {
       const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
       const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
 
-      const newList = await getConvinientStoreList(naverlist.body) as ArticleItem[]
-      naverlist.body = newList
       setNaverlandResult({ totalCount: totalCount, ariticles: clusterData.data.ARTICLE, cortarNo: cortarNo, naverList: naverlist })
       setLoading(false)
     }
@@ -59,8 +57,6 @@ const Officetel = () => {
 
   const handlePagination = async (page: number) => {
     const naverlist = await getNaverlandData(path.replace('/', ''), conditions, naverlandResult.totalCount, naverlandResult.cortarNo, page)
-    const newList = await getConvinientStoreList(naverlist.body) as ArticleItem[]
-    naverlist.body = newList
     setNaverlandResult({ ...naverlandResult, naverList: naverlist })
   }
 

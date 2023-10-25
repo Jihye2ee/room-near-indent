@@ -2,14 +2,14 @@
 import { isEmpty } from 'lodash-es'
 import { usePathname } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
-import { getConvinientStoreList, getCortarsInfo } from '@/src/data/local/queries'
+import { getCortarsInfo } from '@/src/data/local/queries'
 import { CortarInfo } from '@/src/data/local/types'
 import { getNaverLandArticleData, getNaverlandData } from '@/src/data/naverland/queries'
 import { getOneroomIDs } from '@/src/data/oneroom/queries'
 import { getLandList } from '@/src/data/queries'
-import { ArticleData, ArticleItem, ClusterData, PropertyInfo } from '@/src/data/types'
+import { ArticleData, ClusterData, PropertyInfo } from '@/src/data/types'
 import FilterBox from '@/src/ui/components/FilterBox'
 import LandList from '@/src/ui/components/LandList'
 import MapComponent from '@/src/ui/components/MapComponent'
@@ -21,7 +21,7 @@ import { filterState, naverlandResultState, State, zigbangResultState } from '..
 const Oneroom = () => {
   const path = usePathname()
   const conditions = useRecoilValue(filterState)
-  const [zigbangResult, setZigbangResult] = useRecoilState(zigbangResultState)
+  const setZigbangResult = useSetRecoilState(zigbangResultState)
   const [naverlandResult, setNaverlandResult] = useRecoilState(naverlandResultState)
   const [loading, setLoading] = useState(false)
 
@@ -32,8 +32,6 @@ const Oneroom = () => {
       const clusterData: ClusterData = await getNaverLandArticleData(path.replace('/', ''), state, cortarNo)
       const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
       const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
-      const newList = await getConvinientStoreList(naverlist.body) as ArticleItem[]
-      naverlist.body = newList
 
       setNaverlandResult({ totalCount: totalCount, ariticles: clusterData.data.ARTICLE, cortarNo: cortarNo, naverList: naverlist })
       setLoading(false)

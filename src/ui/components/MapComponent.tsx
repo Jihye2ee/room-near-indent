@@ -1,14 +1,12 @@
 'use client'
-import { isEmpty, set } from 'lodash-es'
+import { isEmpty } from 'lodash-es'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { filterState, naverlandResultState, zigbangResultState } from '@/app/recoil-state'
-import { getKakaoKeywordSearch } from '@/src/data/local/queries'
-import { KakaoAddressResult, KakaoKeywordItem } from '@/src/data/local/types'
 import { getNaverlandData } from '@/src/data/naverland/queries'
-import { ArticleData, ArticleItem, PropertyInfo } from '@/src/data/types'
+import { ArticleData } from '@/src/data/types'
 import styled from '@emotion/styled'
 
 const kakaoMapSource = '//dapi.kakao.com/v2/maps/sdk.js?appkey=73ff0f3832dc2af330ffea582903b997&libraries=services&autoload=false'
@@ -23,26 +21,6 @@ const MapComponent = () => {
 
   const [zigbangResult, setZigbangResult] = useRecoilState(zigbangResultState)
   const [naverlandResult, setNaverlanResult] = useRecoilState(naverlandResultState)
-
-  const getConvinientStoreList =  async (filteredList: PropertyInfo[] | ArticleItem[]) => {
-    const results = await Promise.all(
-      filteredList.map(async listItem => {
-        const x = 'random_location' in listItem ? listItem.random_location.lng.toString() : listItem.lng.toString()
-        const y = 'random_location' in listItem ? listItem.random_location.lat.toString() : listItem.lat.toString()
-
-        const keywordResult: KakaoAddressResult = await getKakaoKeywordSearch({ query: '편의점', x, y, radius: 200 })
-        return {
-          ...listItem,
-          category_group: {
-            ...listItem.category_group,
-            convenience_store: keywordResult.documents as KakaoKeywordItem[]
-          }
-        }
-      })
-    )
-
-    return results
-  }
 
   useEffect(() => {
     const existingScript = document.querySelector(`script[src='${kakaoMapSource}']`)
@@ -227,8 +205,7 @@ const MapComponent = () => {
               buildingItems.some(item => item.itemId === zigbang.item_id)
             )
 
-            const newList = await getConvinientStoreList(newZigbangList) as PropertyInfo[]
-            setZigbangResult({ ...zigbangResult, displayedZigbangList: newList })
+            setZigbangResult({ ...zigbangResult, displayedZigbangList: newZigbangList })
           } else {
             const buildingId = container.getAttribute('data-building-id') ?? ''
             const cluster = zigbangResult.clusterList!.find(cluster =>
@@ -237,17 +214,12 @@ const MapComponent = () => {
             const newZigbangList = zigbangResult.zigbangList.filter(zigbang => {
               return cluster?.items.some(item => Number(item.itemId) === zigbang.item_id)
             })
-            const newList = await getConvinientStoreList(newZigbangList) as PropertyInfo[]
-            setZigbangResult({ ...zigbangResult, displayedZigbangList: newList })
+            setZigbangResult({ ...zigbangResult, displayedZigbangList: newZigbangList })
           }
         } else {
           if (!naverlandResult.ariticles) return
           const articleItem = naverlandResult.ariticles.find(article => article.lgeo === buildingId)
-
           const naverItems: ArticleData = await getNaverlandData(path.replace('/', ''), conditions, naverlandResult.totalCount, naverlandResult.cortarNo, 1, buildingId)
-
-          const newList = await getConvinientStoreList(naverItems.body) as ArticleItem[]
-          naverItems.body = newList
           setNaverlanResult({ ...naverlandResult, totalCount: articleItem?.count ?? 0, naverList: naverItems })
         }
       }
