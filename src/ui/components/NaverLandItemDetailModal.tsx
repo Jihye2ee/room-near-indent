@@ -28,17 +28,24 @@ const NaverLandItemDetailModal = ({ item, closeModal }: Props) => {
   const [facilityData, setFacilityData] = useState<any>()
   const [areaUnit, setAreaUnit] = useState<'pyeong' | 'm2'>('m2')
 
-
   useEffect(() => {
     if (!item) return
 
     const fetchDetail = async () => {
-      const detailData: NaverLandDetail = await getNaverLandDetailData(item.atclNo)
-      const facilityData = await getNaverLandFacilityData(item.atclNo, item.lat, item.lng)
-      setItemDetail(detailData)
-      setFacilityData(facilityData.nearFacility)
-      console.log('[naverlist]', detailData)
-      console.log('[facilityData]', facilityData)
+      try {
+        const detailData: NaverLandDetail = await getNaverLandDetailData(item.atclNo)
+        setItemDetail(detailData)
+      } catch {
+        alert('조회 중 에러가 발생했습니다')
+      }
+
+      try {
+        const facilityData = await getNaverLandFacilityData(item.atclNo, item.lat, item.lng)
+        setFacilityData(facilityData.nearFacility)
+      } catch {
+        setFacilityData([])
+        return
+      }
     }
     fetchDetail()
   }, [conditions, cortarNo, item, path, totalCount])

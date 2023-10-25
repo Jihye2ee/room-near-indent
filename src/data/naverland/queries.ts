@@ -50,6 +50,7 @@ export const getNaverlandData = async (path: string, state: State, totalCount: n
     page: page ? page : 1,
     itemId: itemId ? itemId : undefined,
     lgeo: itemId ? itemId : undefined,
+    showR0: undefined,
   })
   const naverURL = `https://m.land.naver.com/cluster/ajax/articleList?${queryParams}`
   const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
@@ -63,7 +64,6 @@ export const getNaverlandData = async (path: string, state: State, totalCount: n
 }
 
 export const getNaverLandDetailData = async (itemId: string) => {
-  console.log('[itemId]', itemId)
   const naverURL = `https://m.land.naver.com/article/info/${itemId}?newMobile`
   const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland/detail?url=${encodeURIComponent(naverURL)}`
   const response = await fetch(url)
