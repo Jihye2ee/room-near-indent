@@ -3,21 +3,14 @@ import { isNil } from 'lodash-es'
 import { useEffect, useState } from 'react'
 
 import { getLandDetail, LandDetailItem } from '@/src/data/detail'
+import LandImageSlider from '@/src/ui/components/LandImageSlider'
 import { m2ToPyeong } from '@/src/utils/convertAreaUnit'
 import { getPriceText } from '@/src/utils/getPriceText'
 import styled from '@emotion/styled'
-import ChangeCircleIcon from '@mui/icons-material/ChangeCircle'
 import CloseIcon from '@mui/icons-material/Close'
-import DirectionsBusFilledIcon from '@mui/icons-material/DirectionsBusFilled'
-import DirectionsSubwayIcon from '@mui/icons-material/DirectionsSubway'
-import LocalCafeIcon from '@mui/icons-material/LocalCafe'
-import LocalConvenienceStoreIcon from '@mui/icons-material/LocalConvenienceStore'
-import LocalGroceryStoreIcon from '@mui/icons-material/LocalGroceryStore'
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital'
-import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService'
-import LocalPharmacyIcon from '@mui/icons-material/LocalPharmacy'
 
-import LandImageSlider from './LandImageSlider'
+import DetailAddressMap from './DetailAddressMap'
+import { getIconForPoiType } from './NearFacilities'
 
 type ModalProps = {
   itemId: number
@@ -28,6 +21,7 @@ const LandItemDetailModal = ({ itemId, closeModal }: ModalProps) => {
   const [itemDetail, setItemDetail] = useState<LandDetailItem>()
   const [showDescriptionMore, setShowDescriptionMore] = useState(false)
   const [areaUnit, setAreaUnit] = useState<'pyeong' | 'm2'>('m2')
+
   const roomDirectionDisplay = () => {
     switch (itemDetail?.room_direction) {
       case 'W':
@@ -50,29 +44,6 @@ const LandItemDetailModal = ({ itemId, closeModal }: ModalProps) => {
         return ''
     }
   }
-  const getIconForPoiType = (poiType: string) => {
-    switch (poiType) {
-      case '지하철역':
-        return <DirectionsSubwayIcon width={24} height={24} />
-      case '버스정류장':
-        return <DirectionsBusFilledIcon width={24} height={24} />
-      case '편의점':
-        return <LocalConvenienceStoreIcon width={24} height={24} />
-      case '세탁소':
-        return <LocalLaundryServiceIcon width={24} height={24} />
-      case '병원':
-        return <LocalHospitalIcon width={24} height={24} />
-      case '카페':
-        return <LocalCafeIcon width={24} height={24} />
-      case '약국':
-        return <LocalPharmacyIcon width={24} height={24} />
-      case '대형마트':
-        return <LocalGroceryStoreIcon width={24} height={24} />
-      default:
-        return null; // 기본값 또는 다른 아이콘
-    }
-  };
-  console.log('[itemDetail]', itemDetail)
 
   useEffect(() => {
     if (!itemId) return
@@ -111,7 +82,7 @@ const LandItemDetailModal = ({ itemId, closeModal }: ModalProps) => {
           )}
           <LandTitle>{itemDetail.title}</LandTitle>
           <ImageContainer>
-            <LandImageSlider images={itemDetail.images} />
+            <LandImageSlider type='zigbang' images={itemDetail.images} />
           </ImageContainer>
         </HeaderContainer>
         <ItemSaleContainer>
@@ -141,8 +112,12 @@ const LandItemDetailModal = ({ itemId, closeModal }: ModalProps) => {
               <LandDetailInfo>{isNil(itemDetail.floor) ? itemDetail.floor_string : itemDetail.floor} / {itemDetail.floor_all}</LandDetailInfo>
             </LandDetailInfoItem>
             <LandDetailInfoItem>
-              <LandDetailInfoLabel>방수 / 욕실 수</LandDetailInfoLabel>
+              <LandDetailInfoLabel>방향</LandDetailInfoLabel>
               <LandDetailInfo>{roomDirectionDisplay()} {`(${itemDetail.direction_criterion} 기준)`}</LandDetailInfo>
+            </LandDetailInfoItem>
+            <LandDetailInfoItem>
+              <LandDetailInfoLabel>방수 / 욕실 수</LandDetailInfoLabel>
+              <LandDetailInfo>- / {itemDetail.bathroom_count}</LandDetailInfo>
             </LandDetailInfoItem>
             <LandDetailInfoItem>
               <LandDetailInfoLabel>입주 가능일</LandDetailInfoLabel>
@@ -179,6 +154,13 @@ const LandItemDetailModal = ({ itemId, closeModal }: ModalProps) => {
           ))}
           </NearbyPointList>
         </NearbyPointContainer>
+        {itemDetail && (
+          <LocationContainer>
+            <LandDetailTitle>위치</LandDetailTitle>
+            <DetailAddress>{itemDetail.jibunAddress}</DetailAddress>
+            <DetailAddressMap position={{ lat: Number(itemDetail.random_location.split(',')[0]), lng: Number(itemDetail.random_location.split(',')[1]) }}/>
+          </LocationContainer>
+        )}
       </Content>
     </Container>
   </>)
@@ -294,7 +276,6 @@ const ImageContainer = styled.div`
   flex-direction: column;
   width: 100%;
   overflow-x: auto;
-
 `
 
 const ItemSaleContainer = styled.div`
@@ -441,4 +422,23 @@ const ConvertAreaUnitButton = styled.button`
   &:hover {
     background-color: var(--grey-300);
   }
+`
+
+const LocationContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  background-color: var(--grey-50);
+  border-radius: 4px;
+  padding: 16px;
+`
+
+const DetailAddress = styled.p`
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--grey-900);
+  line-height: 22px;
+  letter-spacing: -0.3px;
+  margin-bottom: 16px;
 `
