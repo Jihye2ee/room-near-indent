@@ -1,6 +1,5 @@
 'use client'
 import { isEmpty, isNil } from 'lodash-es'
-import Link from 'next/link'
 import { useMemo } from 'react'
 
 import { ArticleItem } from '@/src/data/types'
@@ -8,10 +7,11 @@ import styled from '@emotion/styled'
 
 type Props = {
   item: ArticleItem
+  openModal: (item: ArticleItem) => void
 }
 
 const ALT_IMAGE = '/alt_image.svg'
-const NaverlandListItem = ({ item }: Props) => {
+const NaverlandListItem = ({ item, openModal }: Props) => {
   const imageURL = useMemo(() => item.repImgUrl && `https://landthumb-phinf.pstatic.net/${item.repImgUrl}?type=m400_350`, [item.repImgUrl])
   const handleImageError = ((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = ALT_IMAGE
@@ -21,7 +21,7 @@ const NaverlandListItem = ({ item }: Props) => {
 
   return (
     <Container>
-      <Content aria-label='더보기' href={`https://new.land.naver.com/houses?ms=${item.lat},${item.lng},16&a=VL&e=RETAIL&articleNo=${item.atclNo}`} target='_blank'>
+      <Content aria-label='상세보기' onClick={() => openModal(item)}>
         <ItemImage src={imageURL ?? ALT_IMAGE} alt='' onError={handleImageError} />
         <InfoContainer>
           <TypeText aria-label={item.atclNm}>{item.atclNm}</TypeText>
@@ -61,7 +61,7 @@ const Container = styled.div`
   }
 `
 
-const Content = styled(Link)`
+const Content = styled.div`
   display: flex;
   flex-direction: row;
   gap: 10px;

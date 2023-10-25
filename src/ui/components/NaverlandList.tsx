@@ -1,11 +1,15 @@
 'use client'
+import { useState } from 'react'
 import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { naverlandResultState } from '@/app/recoil-state'
+import { getNaverlandData } from '@/src/data/naverland/queries'
+import { ArticleData, ArticleItem } from '@/src/data/types'
 import { LoaderIcon } from '@/src/style/icons'
 import { Pagination } from '@/src/ui/mui'
 import styled from '@emotion/styled'
 
+import NaverLandItemDetailModal from './NaverLandItemDetailModal'
 import NaverlandListItem from './NaverlandListItem'
 
 type Props = {
@@ -17,6 +21,17 @@ const NaverlandList = ({ handlePagination, loading }: Props) => {
   const naverlandResult = useRecoilValue(naverlandResultState)
   const itemsPerPage = 20
   const totalPages = Math.ceil(naverlandResult.totalCount / itemsPerPage)
+  const [isOpenDetailModal, setIsOpenDetailModal] = useState<boolean>(false)
+  const [selectedItem, setSelectedItem] = useState<ArticleItem>()
+  const openDetailModal = async (item: ArticleItem) => {
+    document.body.style.overflow = 'hidden'
+    setSelectedItem(item)
+    setIsOpenDetailModal(true)
+  }
+  const closeDetailModal = () => {
+    document.body.style.overflow = 'auto'
+    setIsOpenDetailModal(false)
+  }
 
   return (
     <Container tabIndex={0} aria-label='매물 목록'>
@@ -30,7 +45,7 @@ const NaverlandList = ({ handlePagination, loading }: Props) => {
         <EmptyContainer>검색된 결과가 없습니다.</EmptyContainer>
       ) : (<>
         {naverlandResult.naverList.body.map((item, index) => (
-          <NaverlandListItem key={index} item={item} />
+          <NaverlandListItem key={index} item={item} openModal={openDetailModal}/>
         ))}
         <Pagination
           defaultPage={1}
@@ -41,6 +56,7 @@ const NaverlandList = ({ handlePagination, loading }: Props) => {
         />
       </>)}
     </>)}
+    {isOpenDetailModal && <NaverLandItemDetailModal item={selectedItem} closeModal={closeDetailModal} />}
   </Container>
   )
 }
