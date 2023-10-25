@@ -27,26 +27,36 @@ const Oneroom = () => {
 
   const applySearch = useCallback(async (state: State) => {
     if (state.site === 'naver') {
-      const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
-      const cortarNo = cortarsInfo.documents.filter(document => document.region_type === 'B')?.[0].code
-      const clusterData: ClusterData = await getNaverLandArticleData(path.replace('/', ''), state, cortarNo)
-      const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
-      const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
+      try {
+        const cortarsInfo: CortarInfo = await getCortarsInfo({ x: state.area.x, y: state.area.y })
+        const cortarNo = cortarsInfo.documents.filter(document => document.region_type === 'B')?.[0].code
+        const clusterData: ClusterData = await getNaverLandArticleData(path.replace('/', ''), state, cortarNo)
+        const totalCount = clusterData.data.ARTICLE.reduce((acc, cur) => acc + cur.count, 0)
+        const naverlist: ArticleData = await getNaverlandData(path.replace('/', ''), state, totalCount, cortarNo)
 
-      setNaverlandResult({ totalCount: totalCount, ariticles: clusterData.data.ARTICLE, cortarNo: cortarNo, naverList: naverlist })
-      setLoading(false)
+        setNaverlandResult({ totalCount: totalCount, ariticles: clusterData.data.ARTICLE, cortarNo: cortarNo, naverList: naverlist })
+        setLoading(false)
+      } catch {
+        alert('조회 중 에러가 발생했습니다')
+        setLoading(false)
+      }
     } else if (state.site === 'zigbang') {
-      const { uniqueItemIds, clusters, items } = await getOneroomIDs(state)
-      const list: PropertyInfo[] = await getLandList(uniqueItemIds)
-      const filteredList = list.filter(item =>
-        Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
-        && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
-      const newClusters = clusters?.filter(cluster =>
-        cluster.lat >= Number(state.area.bounds.bottomLat) && cluster.lat < Number(state.area.bounds.topLat)
-        && cluster.lng >= Number(state.area.bounds.leftLon) && cluster.lng < Number(state.area.bounds.rightLon)
-      )
-      setZigbangResult({ items, clusterList: newClusters, uniqueItemIds, zigbangList: list, displayedZigbangList: filteredList })
-      setLoading(false)
+      try {
+        const { uniqueItemIds, clusters, items } = await getOneroomIDs(state)
+        const list: PropertyInfo[] = await getLandList(uniqueItemIds)
+        const filteredList = list.filter(item =>
+          Number(item.random_location.lng) >= Number(state.area.bounds.leftLon) && Number(item.random_location.lng) < Number(state.area.bounds.rightLon)
+          && Number(item.random_location.lat) >= Number(state.area.bounds.bottomLat) && Number(item.random_location.lat) < Number(state.area.bounds.topLat))
+        const newClusters = clusters?.filter(cluster =>
+          cluster.lat >= Number(state.area.bounds.bottomLat) && cluster.lat < Number(state.area.bounds.topLat)
+          && cluster.lng >= Number(state.area.bounds.leftLon) && cluster.lng < Number(state.area.bounds.rightLon)
+        )
+        setZigbangResult({ items, clusterList: newClusters, uniqueItemIds, zigbangList: list, displayedZigbangList: filteredList })
+        setLoading(false)
+      } catch {
+        alert('조회 중 에러가 발생했습니다')
+        setLoading(false)
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path])
