@@ -1,23 +1,33 @@
 import styled from '@emotion/styled'
 
 type Props = {
+  type: 'naver' | 'zigbang'
   images: string[]
 }
 
 const ALT_IMAGE = '/alt_image.svg'
-const LandImageSlider = ({ images }: Props) => {
+const LandImageSlider = ({ type, images }: Props) => {
   const handleImageError = ((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = ALT_IMAGE
     e.currentTarget.onerror = null
     return
   })
 
+  const imageUrl = (url: string) => {
+    if (type === 'naver') {
+      return url
+    }
+    return `${url}?w=800&q=70&a=1`
+  }
+
   return (
     <Container>
-      {images.slice(0, 4).map((image, index) => (<>
-        <Image key={`image-${index}`} src={`${image}?w=800&q=70&a=1`} alt={`room-image-thumbnail-${index}`} onError={handleImageError} />
-        {index === 3 && images.length >= 4 && <OverlayText>전체보기</OverlayText>}
-      </>))}
+      {images.slice(0, 4).map((image, index) => (
+        <ImageContainer key={`image-${index}`}>
+          <Image src={imageUrl(image)} alt={`room-image-thumbnail-${index}`} onError={handleImageError} />
+          {index === 3 && images.length >= 4 && <OverlayText>전체보기</OverlayText>}
+        </ImageContainer>
+      ))}
     </Container>
   )
 }
@@ -31,6 +41,13 @@ const Container = styled.div`
   position: relative;
   border-radius: 4px;
   width: calc(144px * 5 + 8px * 5);
+`
+
+const ImageContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  position: relative;
 `
 
 const Image = styled.img`
