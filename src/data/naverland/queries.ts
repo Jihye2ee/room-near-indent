@@ -61,3 +61,36 @@ export const getNaverlandData = async (path: string, state: State, totalCount: n
   const data = await response.json()
   return data
 }
+
+export const getNaverLandDetailData = async (itemId: string) => {
+  console.log('[itemId]', itemId)
+  const naverURL = `https://m.land.naver.com/article/info/${itemId}?newMobile`
+  const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland/detail?url=${encodeURIComponent(naverURL)}`
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw new Error()
+  }
+
+  const data = await response.json()
+  return data
+}
+
+export const getNaverLandFacilityData = async (itemId: string, lat: number, lng: number) => {
+  // articleNo=2343966140&complexNo=129602&lat=37.606392&lng=126.933
+  const queryParams = queryString.stringify({
+    articleNo: itemId,
+    lat: lat,
+    lng: lng,
+  })
+  const naverURL = `https://m.land.naver.com/mobile/api/mobile/articles/facilitiesTransInfo?${queryParams}`
+  const url = `${process.env.NEXT_PUBLIC_WEB_BASE_URL}/api/naverland?url=${encodeURIComponent(naverURL)}`
+  const response = await fetch(url)
+
+  if (!response.ok) {
+    throw new Error()
+  }
+
+  const data = await response.json()
+  return data
+}
