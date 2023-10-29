@@ -1,18 +1,20 @@
 import { isEmpty, isNil } from 'lodash-es'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useEffect, useRef, useState } from 'react'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
-import { filterState, naverlandResultState } from '@/app/recoil-state'
+import { detailModalState, filterState, naverlandResultState } from '@/app/recoil-state'
 import { getNaverLandDetailData, getNaverLandFacilityData } from '@/src/data/naverland/queries'
 import { NaverLandDetail } from '@/src/data/naverland/type'
 import { ArticleItem } from '@/src/data/types'
+import { LoaderIcon } from '@/src/style/icons'
 import LandImageSlider from '@/src/ui/components/LandImageSlider'
 import { extractM2andConvertToPyeong } from '@/src/utils/convertAreaUnit'
 import styled from '@emotion/styled'
 import CloseIcon from '@mui/icons-material/Close'
 
 import DetailAddressMap from './DetailAddressMap'
+import ImageSlider from './ImageSlider'
 import NearFacilityItem from './NearFacilities'
 
 type Props = {
@@ -27,6 +29,24 @@ const NaverLandItemDetailModal = ({ item, closeModal }: Props) => {
   const [itemDetail, setItemDetail] = useState<NaverLandDetail>()
   const [facilityData, setFacilityData] = useState<any[]>([])
   const [areaUnit, setAreaUnit] = useState<'pyeong' | 'm2'>('m2')
+  const [loading, setLoading] = useState<boolean>(true)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [detailModalOpenState, setDetailModalState] = useRecoilState(detailModalState)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0)
+
+  const openImageSlider = (index: number) => {
+    if (!containerRef.current) return
+    containerRef.current.style.overflow = 'hidden'
+    setSelectedImageIndex(index)
+    setDetailModalState({ ...detailModalOpenState, imageDetailModalOpen: true })
+  }
+
+  const closeImageSlider = () => {
+    if (!containerRef.current) return
+    containerRef.current.style.overflow = 'auto'
+    setSelectedImageIndex(0)
+    setDetailModalState({ ...detailModalOpenState, imageDetailModalOpen: false })
+  }
 
   useEffect(() => {
     if (!item) return
@@ -35,7 +55,9 @@ const NaverLandItemDetailModal = ({ item, closeModal }: Props) => {
       try {
         const detailData: NaverLandDetail = await getNaverLandDetailData(item.atclNo)
         setItemDetail(detailData)
+        setLoading(false)
       } catch {
+        setLoading(false)
         alert('조회 중 에러가 발생했습니다')
       }
 
@@ -50,104 +72,111 @@ const NaverLandItemDetailModal = ({ item, closeModal }: Props) => {
       }
     }
     fetchDetail()
-  }, [conditions, cortarNo, item, path, totalCount])
+  }, [conditions, cortarNo, item, loading, path, totalCount])
 
-  if (!itemDetail) return (<></>)
   return (<>
-    <Background onClick={() => {
-      closeModal()
-    }} />
-    <Container>
+    <Background onClick={() => closeModal()} />
+    <Container ref={containerRef} >
       <CloseContainer onClick={closeModal}>
         <CloseIcon width={24} height={24} />
       </CloseContainer>
-      <Content>
-        <HeaderContainer>
-          {itemDetail.propertyType === '오피스텔' ? (
-            <ServiceType>{itemDetail.propertyType} {itemDetail.location}</ServiceType>
-          ) : (
-            <ServiceType>{itemDetail.propertyType}</ServiceType>
-          )}
-          <SalesType>{itemDetail.price}</SalesType>
-          <LandTitle>{itemDetail.description}</LandTitle>
-          <ImageContainer>
-            <LandImageSlider type='naver' images={itemDetail.images} />
-          </ImageContainer>
-        </HeaderContainer>
-        <ItemSaleContainer>
-          <LandDetailTitle>매물 정보</LandDetailTitle>
-          <LandDetailInfoList>
-            <AreaUnitContainer>
+      {loading && (
+        <LoadingContainer>
+        <LoaderIcon width={40} height={40} />
+      </LoadingContainer>
+      )}
+      {!loading && itemDetail && (
+        <Content>
+          <HeaderContainer>
+            {itemDetail.propertyType === '오피스텔' ? (
+              <ServiceType>{itemDetail.propertyType} {itemDetail.location}</ServiceType>
+            ) : (
+              <ServiceType>{itemDetail.propertyType}</ServiceType>
+            )}
+            <SalesType>{itemDetail.price}</SalesType>
+            <LandTitle>{itemDetail.description}</LandTitle>
+            <ImageContainer>
+              <LandImageSlider type='naver' images={itemDetail.images} openImageSlider={openImageSlider} />
+            </ImageContainer>
+          </HeaderContainer>
+          <ItemSaleContainer>
+            <LandDetailTitle>매물 정보</LandDetailTitle>
+            <LandDetailInfoList>
+              <AreaUnitContainer>
+                <LandDetailInfoItem>
+                  <LandDetailInfoLabel>공급/전용면적</LandDetailInfoLabel>
+                  {areaUnit === 'm2' ? (
+                    <LandDetailInfo>{itemDetail.areaUnit.replace('평', '')}</LandDetailInfo>
+                  ) : (
+                    <LandDetailInfo>{extractM2andConvertToPyeong(itemDetail.areaUnit)}</LandDetailInfo>
+                  )}
+                </LandDetailInfoItem>
+                <ConvertAreaUnitButton onClick={() => {
+                  setAreaUnit(areaUnit === 'pyeong' ? 'm2' : 'pyeong')
+                }}>
+                  {areaUnit === 'pyeong' ? `↻ ㎡`: '↻ 평'}
+                </ConvertAreaUnitButton>
+              </AreaUnitContainer>
               <LandDetailInfoItem>
-                <LandDetailInfoLabel>공급/전용면적</LandDetailInfoLabel>
-                {areaUnit === 'm2' ? (
-                  <LandDetailInfo>{itemDetail.areaUnit.replace('평', '')}</LandDetailInfo>
-                ) : (
-                  <LandDetailInfo>{extractM2andConvertToPyeong(itemDetail.areaUnit)}</LandDetailInfo>
-                )}
+                <LandDetailInfoLabel>관리비</LandDetailInfoLabel>
+                <LandDetailInfo>{isNil(itemDetail.managementFee) ? '-' : itemDetail.managementFee}</LandDetailInfo>
+                {/* TODO: 관리비 포함 항목 */}
               </LandDetailInfoItem>
-              <ConvertAreaUnitButton onClick={() => {
-                setAreaUnit(areaUnit === 'pyeong' ? 'm2' : 'pyeong')
-              }}>
-                {areaUnit === 'pyeong' ? `↻ ㎡`: '↻ 평'}
-              </ConvertAreaUnitButton>
-            </AreaUnitContainer>
-            <LandDetailInfoItem>
-              <LandDetailInfoLabel>관리비</LandDetailInfoLabel>
-              <LandDetailInfo>{isNil(itemDetail.managementFee) ? '-' : itemDetail.managementFee}</LandDetailInfo>
-              {/* TODO: 관리비 포함 항목 */}
-            </LandDetailInfoItem>
-            <LandDetailInfoItem>
-              <LandDetailInfoLabel>해당층 / 총 층수</LandDetailInfoLabel>
-              <LandDetailInfo>{isNil(itemDetail.floorInfo) ? itemDetail.floorInfo : '-'}</LandDetailInfo>
-            </LandDetailInfoItem>
-            <LandDetailInfoItem>
-              <LandDetailInfoLabel>방향</LandDetailInfoLabel>
-              <LandDetailInfo>{itemDetail.direction}</LandDetailInfo>
-            </LandDetailInfoItem>
-            <LandDetailInfoItem>
-              <LandDetailInfoLabel>방수 / 욕실 수</LandDetailInfoLabel>
-              <LandDetailInfo>{isEmpty(itemDetail.roomBathCount) ? '-' : itemDetail.roomBathCount}</LandDetailInfo>
-            </LandDetailInfoItem>
-            <LandDetailInfoItem>
-              <LandDetailInfoLabel>입주 가능일</LandDetailInfoLabel>
-              <LandDetailInfo>{itemDetail.approvalDate}</LandDetailInfo>
-            </LandDetailInfoItem>
-            <LandDetailInfoItem>
-              <LandDetailInfoLabel>주차 정보</LandDetailInfoLabel>
-              <LandDetailInfo>{itemDetail.parkingCount}</LandDetailInfo>
-            </LandDetailInfoItem>
-            <LandDetailInfoItem>
-              <LandDetailInfoLabel>매물번호</LandDetailInfoLabel>
-              <LandDetailInfo>{itemDetail.propertyNumber}</LandDetailInfo>
-            </LandDetailInfoItem>
-            <LandDetailInfoItem style={{ flexDirection: 'column' }}>
-              <LandDetailInfoLabel>상세 설명</LandDetailInfoLabel>
-              <LandDescription show={showDescriptionMore}>
-                {`${itemDetail.propertyDescription}`}
-              </LandDescription>
-              <ShowMoreButton onClick={() => setShowDescriptionMore(!showDescriptionMore)}>
-                {showDescriptionMore ? '닫기' : '더보기'}
-              </ShowMoreButton>
-            </LandDetailInfoItem>
-          </LandDetailInfoList>
-        </ItemSaleContainer>
-        <NearbyPointContainer>
-          <LandDetailTitle>주변 편의시설 (1km 이내)</LandDetailTitle>
-          <NearbyPointList>
-            {facilityData && facilityData.filter((facility: any) => facility.closestDist <= 1000).map((item: any) => (
-              <NearFacilityItem key={item.complexView.cssName} item={item} />
-            ))}
-          </NearbyPointList>
-        </NearbyPointContainer>
-        {item && (
-          <LocationContainer>
-            <LandDetailTitle>위치</LandDetailTitle>
-            <DetailAddress>{itemDetail.detailAddress}</DetailAddress>
-            <DetailAddressMap position={{ lat: item.lat, lng: item.lng}}/>
-          </LocationContainer>
-        )}
-      </Content>
+              <LandDetailInfoItem>
+                <LandDetailInfoLabel>해당층 / 총 층수</LandDetailInfoLabel>
+                <LandDetailInfo>{isNil(itemDetail.floorInfo) ? itemDetail.floorInfo : '-'}</LandDetailInfo>
+              </LandDetailInfoItem>
+              <LandDetailInfoItem>
+                <LandDetailInfoLabel>방향</LandDetailInfoLabel>
+                <LandDetailInfo>{itemDetail.direction}</LandDetailInfo>
+              </LandDetailInfoItem>
+              <LandDetailInfoItem>
+                <LandDetailInfoLabel>방수 / 욕실 수</LandDetailInfoLabel>
+                <LandDetailInfo>{isEmpty(itemDetail.roomBathCount) ? '-' : itemDetail.roomBathCount}</LandDetailInfo>
+              </LandDetailInfoItem>
+              <LandDetailInfoItem>
+                <LandDetailInfoLabel>입주 가능일</LandDetailInfoLabel>
+                <LandDetailInfo>{itemDetail.approvalDate}</LandDetailInfo>
+              </LandDetailInfoItem>
+              <LandDetailInfoItem>
+                <LandDetailInfoLabel>주차 정보</LandDetailInfoLabel>
+                <LandDetailInfo>{itemDetail.parkingCount}</LandDetailInfo>
+              </LandDetailInfoItem>
+              <LandDetailInfoItem>
+                <LandDetailInfoLabel>매물번호</LandDetailInfoLabel>
+                <LandDetailInfo>{itemDetail.propertyNumber}</LandDetailInfo>
+              </LandDetailInfoItem>
+              <LandDetailInfoItem style={{ flexDirection: 'column' }}>
+                <LandDetailInfoLabel>상세 설명</LandDetailInfoLabel>
+                <LandDescription show={showDescriptionMore}>
+                  {`${itemDetail.propertyDescription}`}
+                </LandDescription>
+                <ShowMoreButton onClick={() => setShowDescriptionMore(!showDescriptionMore)}>
+                  {showDescriptionMore ? '닫기' : '더보기'}
+                </ShowMoreButton>
+              </LandDetailInfoItem>
+            </LandDetailInfoList>
+          </ItemSaleContainer>
+          {facilityData && (
+            <NearbyPointContainer>
+              <LandDetailTitle>주변 편의시설 (1km 이내)</LandDetailTitle>
+              <NearbyPointList>
+                {facilityData.filter((facility: any) => facility.closestDist <= 1000).map((item: any) => (
+                  <NearFacilityItem key={item.complexView.cssName} item={item} />
+                ))}
+              </NearbyPointList>
+            </NearbyPointContainer>
+          )}
+          {item && (
+            <LocationContainer>
+              <LandDetailTitle>위치</LandDetailTitle>
+              <DetailAddress>{itemDetail.detailAddress}</DetailAddress>
+              <DetailAddressMap position={{ lat: item.lat, lng: item.lng}}/>
+            </LocationContainer>
+          )}
+          {detailModalOpenState.imageDetailModalOpen && <ImageSlider type='naver' images={itemDetail.images} selectedIndex={selectedImageIndex} closeModal={closeImageSlider} />}
+        </Content>
+      )}
     </Container>
   </>)
 }
@@ -194,6 +223,13 @@ const Container = styled.div`
     height: 100%;
     border-radius: 0;
   }
+`
+
+const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 `
 
 const CloseContainer = styled.div``

@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
-import { naverlandResultState } from '@/app/recoil-state'
+import { detailModalState, naverlandResultState } from '@/app/recoil-state'
 import { ArticleItem } from '@/src/data/types'
 import { LoaderIcon } from '@/src/style/icons'
 import { Pagination } from '@/src/ui/mui'
@@ -20,16 +20,22 @@ const NaverlandList = ({ handlePagination, loading }: Props) => {
   const naverlandResult = useRecoilValue(naverlandResultState)
   const itemsPerPage = 20
   const totalPages = Math.ceil(naverlandResult.totalCount / itemsPerPage)
-  const [isOpenDetailModal, setIsOpenDetailModal] = useState<boolean>(false)
+  const [detailModalOpenState, setDetailModalState] = useRecoilState(detailModalState)
   const [selectedItem, setSelectedItem] = useState<ArticleItem>()
+
   const openDetailModal = async (item: ArticleItem) => {
     document.body.style.overflow = 'hidden'
     setSelectedItem(item)
-    setIsOpenDetailModal(true)
+    setDetailModalState({ ...detailModalOpenState, landDetailModalopen: true })
   }
   const closeDetailModal = () => {
+    if (detailModalOpenState.imageDetailModalOpen) {
+      setDetailModalState({ ...detailModalOpenState, imageDetailModalOpen: false })
+      return
+    }
+
     document.body.style.overflow = 'auto'
-    setIsOpenDetailModal(false)
+    setDetailModalState({ ...detailModalOpenState, landDetailModalopen: false })
   }
 
   return (
@@ -55,7 +61,7 @@ const NaverlandList = ({ handlePagination, loading }: Props) => {
         />
       </>)}
     </>)}
-    {isOpenDetailModal && <NaverLandItemDetailModal item={selectedItem} closeModal={closeDetailModal} />}
+    {detailModalOpenState.landDetailModalopen && <NaverLandItemDetailModal item={selectedItem} closeModal={closeDetailModal} />}
   </Container>
   )
 }
