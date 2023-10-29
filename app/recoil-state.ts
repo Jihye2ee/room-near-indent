@@ -108,3 +108,15 @@ export const naverlandResultState = atom<naverlandState>({
     totalCount: 0,
   }
 })
+
+type DetailModalTypeState = {
+  landDetailModalopen: boolean
+  imageDetailModalOpen: boolean
+}
+export const detailModalState = atom<DetailModalTypeState>({
+  key: 'detailModalState',
+  default: {
+    landDetailModalopen: false,
+    imageDetailModalOpen: false,
+  }
+})
