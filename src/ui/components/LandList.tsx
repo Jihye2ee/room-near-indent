@@ -1,8 +1,8 @@
 'use client'
 import { useEffect, useMemo, useState } from 'react'
-import { useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
-import { zigbangResultState } from '@/app/recoil-state'
+import { detailModalState, zigbangResultState } from '@/app/recoil-state'
 import { LoaderIcon } from '@/src/style/icons'
 import LandItemDetailModal from '@/src/ui/components/LandItemDetailModal'
 import LandListItem from '@/src/ui/components/LandListItem'
@@ -19,16 +19,20 @@ const LandList = ({ loading }: Props) => {
   const landList = useRecoilValue(zigbangResultState)
   const totalItems = useMemo(() => landList.displayedZigbangList.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [currentPage, landList.displayedZigbangList])
   const totalPages = Math.ceil(landList.displayedZigbangList.length / itemsPerPage)
-  const [isOpenDetailModal, setIsOpenDetailModal] = useState<boolean>(false)
+  const [detailModalOpenState, setDetailModalState] = useRecoilState(detailModalState)
   const [selectedItemId, setSelectedItemId] = useState<number>(0)
   const openDetailModal = (itemId: number) => {
     document.body.style.overflow = 'hidden'
     setSelectedItemId(itemId)
-    setIsOpenDetailModal(true)
+    setDetailModalState({ ...detailModalOpenState, landDetailModalopen: true })
   }
   const closeDetailModal = () => {
+    if (detailModalOpenState.imageDetailModalOpen) {
+      setDetailModalState({ ...detailModalOpenState, imageDetailModalOpen: false })
+      return
+    }
     document.body.style.overflow = 'auto'
-    setIsOpenDetailModal(false)
+    setDetailModalState({ ...detailModalOpenState, landDetailModalopen: false })
   }
 
   useEffect(() => {
@@ -36,7 +40,7 @@ const LandList = ({ loading }: Props) => {
   }, [landList.displayedZigbangList])
 
   return (
-    <Container aria-label='매물 목록' aria-hidden={isOpenDetailModal} tabIndex={isOpenDetailModal ? -1 : 0}>
+    <Container aria-label='매물 목록' aria-hidden={detailModalOpenState.landDetailModalopen} tabIndex={detailModalOpenState.landDetailModalopen ? -1 : 0}>
       <TotalCountText aria-label={`총 ${landList.displayedZigbangList.length}`}>총 {landList.displayedZigbangList.length}개</TotalCountText>
       {loading ? (
         <LoadingContainer>
@@ -58,7 +62,7 @@ const LandList = ({ loading }: Props) => {
         />
       </>)}
      </>)}
-     {isOpenDetailModal && <LandItemDetailModal itemId={selectedItemId} closeModal={closeDetailModal} />}
+     {detailModalOpenState.landDetailModalopen && <LandItemDetailModal itemId={selectedItemId} closeModal={closeDetailModal} />}
     </Container>
   )
 }

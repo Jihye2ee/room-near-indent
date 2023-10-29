@@ -3,10 +3,11 @@ import styled from '@emotion/styled'
 type Props = {
   type: 'naver' | 'zigbang'
   images: string[]
+  openImageSlider: (selectedIndex: number) => void
 }
 
 const ALT_IMAGE = '/alt_image.svg'
-const LandImageSlider = ({ type, images }: Props) => {
+const LandImageSlider = ({ type, images, openImageSlider }: Props) => {
   const handleImageError = ((e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     e.currentTarget.src = ALT_IMAGE
     e.currentTarget.onerror = null
@@ -23,7 +24,7 @@ const LandImageSlider = ({ type, images }: Props) => {
   return (
     <Container>
       {images.slice(0, 4).map((image, index) => (
-        <ImageContainer key={`image-${index}`}>
+        <ImageContainer key={`image-${index}`} onClick={() => openImageSlider(index)}>
           <Image src={imageUrl(image)} alt={`room-image-thumbnail-${index}`} onError={handleImageError} />
           {index === 3 && images.length >= 4 && <OverlayText>전체보기</OverlayText>}
         </ImageContainer>
