@@ -100,7 +100,7 @@ const Officetel = () => {
 
 export default Officetel
 
-const Container = styled.div`
+const Container = styled.main`
   display: flex;
   flex-direction: column;
   height: calc(100% - 60px);

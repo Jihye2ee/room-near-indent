@@ -52,12 +52,12 @@ const AddressSearchInput = ({ onChange }: Props) => {
       options={options}
       onChange={(_, value) => handleOnChange(value)}
       noOptionsText='검색 결과가 없습니다'
-      popupIcon={<Search sx={{ fontSize: 16 }} />}
+      popupIcon={<Search sx={{ fontSize: 24 }} />}
       getOptionLabel={(option) => 'place_name' in option ? option.place_name : option.address_name}
       isOptionEqualToValue={(option, value) => 'id' in option && 'id' in value ? option.id === value.id : option.x === value.x && option.y === value.y}
       renderOption={(props, option) => {
         return (
-          <Box component='li' {...props} key={`${props.id}`}>
+          <Box component='li' {...props} key={props.id} id={props.id}>
             <Typography
               variant='body2'
               color='grey.800'
@@ -93,13 +93,12 @@ const autoCompleteSx: SxProps = {
   '.MuiOutlinedInput-root': {
     backgroundColor: 'grey.200',
     height: 42,
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: 600,
     py: 0.625,
-    pl: 6,
+    pl: 2,
     color: 'grey.800',
     fieldset: { border: 'none' },
-    '.MuiAutocomplete-endAdornment': { left: 16 },
   },
   '.MuiAutocomplete-endAdornment': { top: 'calc(50% - 12px)' },
   '.MuiAutocomplete-popupIndicator': { p: 0, color: 'grey.600' },

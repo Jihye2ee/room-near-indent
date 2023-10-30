@@ -40,7 +40,7 @@ const NaverlandList = ({ handlePagination, loading }: Props) => {
 
   return (
     <Container tabIndex={0} aria-label='매물 목록'>
-      <TotalCountText aria-label={`총 ${naverlandResult.totalCount}`}>총 {naverlandResult.totalCount}개</TotalCountText>
+      <TotalCountText>총 {naverlandResult.totalCount}+개의 매물이 있습니다.</TotalCountText>
        {loading ? (
         <LoadingContainer>
           <LoaderIcon width={40} height={40} />
@@ -68,7 +68,7 @@ const NaverlandList = ({ handlePagination, loading }: Props) => {
 
 export default NaverlandList
 
-const Container = styled.div`
+const Container = styled.section`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -82,7 +82,7 @@ const LoadingContainer = styled.div`
   height: 100%;
 `
 
-const TotalCountText = styled.p`
+const TotalCountText = styled.h1`
   font-size: 14px;
   font-weight: 400;
   color: var(--grey-700);

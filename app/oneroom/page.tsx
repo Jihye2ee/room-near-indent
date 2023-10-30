@@ -96,7 +96,7 @@ const Oneroom = () => {
 
 export default Oneroom
 
-const Container = styled.div`
+const Container = styled.main`
   display: flex;
   flex-direction: column;
   height: calc(100% - 60px);

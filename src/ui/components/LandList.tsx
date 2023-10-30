@@ -41,7 +41,7 @@ const LandList = ({ loading }: Props) => {
 
   return (
     <Container aria-label='매물 목록' aria-hidden={detailModalOpenState.landDetailModalopen} tabIndex={detailModalOpenState.landDetailModalopen ? -1 : 0}>
-      <TotalCountText aria-label={`총 ${landList.displayedZigbangList.length}`}>총 {landList.displayedZigbangList.length}개</TotalCountText>
+      <TotalCountText>총 {landList.displayedZigbangList.length}+개의 매물이 있습니다.</TotalCountText>
       {loading ? (
         <LoadingContainer>
           <LoaderIcon width={40} height={40} />
@@ -58,7 +58,7 @@ const LandList = ({ loading }: Props) => {
           count={totalPages}
           page={currentPage}
           onChange={(_, page) => setCurrentPage(page)}
-          sx={{ alignSelf: 'center', '.MuiPaginationItem-text': { color: 'grey.600' }, cursor: 'pointer', py: 2 }}
+          sx={{ alignSelf: 'center', '.MuiPaginationItem-text': { color: 'grey.1000' }, '.Mui-selected': { backgroundColor: 'grey.200' }, cursor: 'pointer', py: 2 }}
         />
       </>)}
      </>)}
@@ -69,7 +69,7 @@ const LandList = ({ loading }: Props) => {
 
 export default LandList
 
-const Container = styled.div`
+const Container = styled.section`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -83,7 +83,7 @@ const LoadingContainer = styled.div`
   height: 100%;
 `
 
-const TotalCountText = styled.p`
+const TotalCountText = styled.h1`
   font-size: 14px;
   font-weight: 400;
   color: var(--grey-700);
